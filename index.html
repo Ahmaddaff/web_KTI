@@ -200,22 +200,41 @@
     .view + .view { border-top: 1px solid rgba(255,255,255,0.045); }
     .view.view-enter { animation: viewIn .55s cubic-bezier(.22,1,.36,1) both; }
 
-    /* scroll-driven "widen while rising" effect (all sections, incl. hero).
-       No transition here: the values are already written every animation frame,
-       and a transition on top of that makes the box chase its target and lag. */
-    .view > div:first-child {
-      transform: translate3d(0, var(--ty, 0px), 0) scaleX(var(--exp, 1));
-      transform-origin: center top;
-      opacity: var(--op, 1);
-      will-change: transform;
+    /* ---- reveal on enter (same character as the reference site):
+       content fades in and rises once when it enters the viewport, then stays
+       put. No scale, no exit fade — the move only ever plays once, so a plain
+       CSS transition does the work and nothing is written per frame.
+       The .view prefix is required: cards carry .lift, whose own transition
+       shorthand would otherwise win and make the fade jump instead of ramp. */
+    .view .rv {
+      opacity: 0;
+      transform: translate3d(0, var(--rv-y, 40px), 0);
+      transition:
+        opacity .56s cubic-bezier(.25,.46,.45,.94) var(--rv-d, 0ms),
+        transform .56s cubic-bezier(.25,.46,.45,.94) var(--rv-d, 0ms);
+    }
+    .view .rv-in {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
     }
 
-    /* divider: light beam that fires outward from the center as the section arrives */
+    /* The section wrapper only shifts, it never fades. Fading it as well would
+       multiply with the fades of the blocks inside it, and the product of two
+       ramps keeps the content nearly black for far too long. */
+    .view .rv-shift {
+      transform: translate3d(0, var(--rv-y, 40px), 0);
+      transition: transform .62s cubic-bezier(.25,.46,.45,.94) var(--rv-d, 0ms);
+    }
+    .view .rv-shift.rv-in {
+      transform: translate3d(0, 0, 0);
+    }
+
+    /* divider: light beam that fires outward from the center when the section arrives */
     .view:not(#view-home)::before {
       content: '';
       position: absolute; top: 0; left: 50%;
       width: 100%; height: 3px;
-      transform: translateX(-50%) scaleX(var(--rule, 0));
+      transform: translateX(-50%) scaleX(0);
       transform-origin: center;
       background: linear-gradient(90deg,
         rgba(59,130,246,0) 0%,
@@ -226,7 +245,9 @@
       box-shadow: 0 0 22px rgba(34,211,238,.7), 0 0 60px rgba(59,130,246,.45);
       border-radius: 3px;
       pointer-events: none;
+      transition: transform .8s cubic-bezier(.25,.46,.45,.94) .08s;
     }
+    .view:not(#view-home).rule-in::before { transform: translateX(-50%) scaleX(1); }
     @keyframes viewIn {
       from { opacity: 0; transform: translateY(18px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -316,8 +337,7 @@
       #bgConic, #bgGrid, #bgGrain, #bgSweep { animation: none !important; }
       #bgConic { transform: translate(-50%,-50%) !important; }
       #bgSweep { opacity: 0 !important; }
-      .view.view-enter { animation: none !important; }
-      .view > div:first-child { transform: none !important; opacity: 1 !important; transition: none !important; }
+      .rv, .rv-shift { opacity: 1 !important; transform: none !important; transition: none !important; }
       .view:not(#view-home)::before { transform: translateX(-50%) scaleX(1) !important; transition: none !important; }
       .dash-scan, .dash-card::before, .dash-bar, .dash-row, .live-dot::after, .sidebar-active::after { animation: none !important; }
       .dash-row { opacity: 1; transform: none; }
@@ -1452,111 +1472,132 @@
       if (name === 'home') setTimeout(animateCounters, 500);
     }
 
-    /* ---------- SCROLL-LINKED SECTION ANIMATION ----------
-       One pass per frame: read every rect first, then write every style.
-       Mixing reads and writes forces a synchronous reflow each time, which is
-       what made the boxes feel steppy. Values are written straight onto the
-       element (not via CSS custom properties) so there is no var() re-resolve. */
-    const viewCache = [];
-    let navLinks = [];
-    let lastActiveNav = null;
+    /* ---------- REVEAL ON ENTER ----------
+       Same behaviour as the reference site: a block fades in and rises once
+       when it enters the viewport, then stays. One-shot, so a plain CSS
+       transition does the work — nothing is written per animation frame and
+       nothing is read back, which keeps the main thread free while scrolling. */
+    const RV_DIST = { section: 40, block: 20, card: 24 };
 
-    function buildViewCache() {
-      viewCache.length = 0;
-      document.querySelectorAll('.view').forEach((el) => {
-        viewCache.push({
-          el,
-          inner: el.firstElementChild,
-          isHero: el.id === 'view-home',
-          id: el.id.replace('view-', ''),
+    function collectRevealTargets() {
+      const out = [];
+      document.querySelectorAll('.view').forEach((sec) => {
+        const inner = sec.firstElementChild;
+        if (!inner) return;
+
+        // level 1: the section's own content block — shifts, never fades
+        out.push({ el: inner, y: RV_DIST.section, d: 0, sec: sec, shift: true });
+
+        // level 2: blocks inside the content column, cascading after the section
+        const col = inner.querySelector(':scope > .max-w-7xl') ||
+                    inner.querySelector(':scope > div > .max-w-7xl') ||
+                    inner;
+
+        let blockIdx = 0;
+        Array.from(col.children).forEach((block) => {
+          if (block.classList.contains('grid')) {
+            // a grid reveals its own children so the cards cascade
+            Array.from(block.children).forEach((card, i) => {
+              out.push({ el: card, y: RV_DIST.card, d: 120 + Math.min(i, 4) * 70 });
+            });
+          } else {
+            out.push({ el: block, y: RV_DIST.block, d: 120 + Math.min(blockIdx, 3) * 70 });
+            blockIdx++;
+          }
         });
       });
-      navLinks = Array.from(document.querySelectorAll('[data-link]'));
+      return out;
     }
 
-    function updateScrollEffects() {
-      const vh = window.innerHeight;
-      const y = window.scrollY;
-      const start = vh * 0.95;
-      const end = vh * 0.1;
-      const span = start - end || 1;
+    function initReveal() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-      /* ---- READ PHASE (single layout flush) ---- */
-      const geo = [];
-      for (let i = 0; i < viewCache.length; i++) {
-        const r = viewCache[i].el.getBoundingClientRect();
-        geo.push({ top: r.top, bottom: r.bottom, height: r.height });
-      }
-      const docH = document.documentElement.scrollHeight;
+      const targets = collectRevealTargets();
 
-      /* ---- WRITE PHASE ---- */
-      for (let i = 0; i < viewCache.length; i++) {
-        const v = viewCache[i];
-        const g = geo[i];
-        const h = g.height > 1 ? g.height : 1;
-
-        let pEnter = v.isHero ? 1 : (start - g.top) / span;
-        pEnter = pEnter < 0 ? 0 : pEnter > 1 ? 1 : pEnter;
-
-        let pExit = (g.bottom - h * 0.3) / (h * 0.3);
-        pExit = pExit < 0 ? 0 : pExit > 1 ? 1 : pExit;
-
-        const p = pEnter < pExit ? pEnter : pExit;
-        const exp = 0.83 + 0.17 * p;
-        const ty = (1 - pEnter) * 110;
-
-        const a = pEnter / 0.65 > 1 ? 1 : pEnter / 0.65;
-        const b = pExit / 0.6 > 1 ? 1 : pExit / 0.6;
-        const opA = 0.5 + 0.5 * a;
-        const opB = 0.8 + 0.2 * b;
-        const op = opA < opB ? opA : opB;
-
-        const inner = v.inner;
-        if (inner) {
-          inner.style.transform =
-            'translate3d(0,' + ty.toFixed(1) + 'px,0) scaleX(' + exp.toFixed(4) + ')';
-          inner.style.opacity = op.toFixed(3);
-        }
-        v.el.style.setProperty('--rule', (pEnter * 1.8 > 1 ? 1 : pEnter * 1.8).toFixed(3));
+      // write the start state in one pass, before anything is observed
+      for (let i = 0; i < targets.length; i++) {
+        const t = targets[i];
+        t.el.style.setProperty('--rv-y', t.y + 'px');
+        t.el.style.setProperty('--rv-d', t.d + 'ms');
+        t.el.classList.add(t.shift ? 'rv-shift' : 'rv');
       }
 
-      /* nav highlight — only touch the DOM when it actually changes */
-      const probe = SECTION_OFFSET + 48;
-      let current = 'home';
-      for (let i = 0; i < geo.length; i++) {
-        if (geo[i].top <= probe) current = viewCache[i].id;
+      // Commit the start state with one forced style flush. Without it the
+      // observer can deliver .rv-in inside the same style pass, so the browser
+      // only ever sees the final value and the transition never runs.
+      void document.body.offsetHeight;
+
+      const secOf = new Map();
+      for (let i = 0; i < targets.length; i++) {
+        if (targets[i].sec) secOf.set(targets[i].el, targets[i].sec);
       }
-      if (current !== lastActiveNav) {
-        lastActiveNav = current;
-        for (let i = 0; i < navLinks.length; i++) {
-          navLinks[i].classList.toggle('nav-active', navLinks[i].dataset.link === current);
+
+      const pending = targets.map((t) => t.el);
+      let scrollHandler = null;
+
+      function reveal(el) {
+        const i = pending.indexOf(el);
+        if (i < 0) return;
+        pending.splice(i, 1);
+        el.classList.add('rv-in');
+        const sec = secOf.get(el);
+        if (sec) sec.classList.add('rule-in');   // divider beam fires with its section
+        if (!pending.length && scrollHandler) {
+          window.removeEventListener('scroll', scrollHandler);
+          scrollHandler = null;
         }
       }
 
+      const io = new IntersectionObserver((entries) => {
+        for (let i = 0; i < entries.length; i++) {
+          if (!entries[i].isIntersecting) continue;
+          reveal(entries[i].target);
+          io.unobserve(entries[i].target);
+        }
+      }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
+
+      for (let i = 0; i < targets.length; i++) io.observe(targets[i].el);
+
+      /* Safety net. A fast flick — or dragging the scrollbar straight to the
+         bottom — can carry a block from below the fold to above it between two
+         frames, so the observer never reports it as visible and it would stay
+         at opacity 0 forever. This sweep catches anything already at or above
+         the fold, and removes itself once every target has been revealed. */
+      let sweeping = false;
+      function sweep() {
+        sweeping = false;
+        const vh = window.innerHeight;
+        for (let i = pending.length - 1; i >= 0; i--) {
+          const r = pending[i].getBoundingClientRect();
+          if (r.bottom < 0 || r.top < vh * 0.88) reveal(pending[i]);
+        }
+      }
+      scrollHandler = () => {
+        if (sweeping) return;
+        sweeping = true;
+        requestAnimationFrame(sweep);
+      };
+      window.addEventListener('scroll', scrollHandler, { passive: true });
+    }
+
+    /* ---------- SCROLL PROGRESS BAR ---------- */
+    let barTicking = false;
+    function updateBar() {
+      barTicking = false;
       const bar = document.getElementById('routeBar');
-      if (bar) {
-        const max = docH - vh;
-        bar.style.width = (max > 0 ? (y / max) * 100 : 0).toFixed(2) + '%';
-      }
-    }
-
-    let spyTicking = false;
-    function onScrollFrame() {
-      spyTicking = false;
-      updateScrollEffects();
+      if (!bar) return;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0).toFixed(2) + '%';
     }
     window.addEventListener('scroll', () => {
-      if (!spyTicking) { spyTicking = true; requestAnimationFrame(onScrollFrame); }
+      if (!barTicking) { barTicking = true; requestAnimationFrame(updateBar); }
     }, { passive: true });
-    window.addEventListener('resize', () => {
-      buildViewCache();
-      updateScrollEffects();
-    }, { passive: true });
+    window.addEventListener('resize', updateBar, { passive: true });
 
     // init: deep-link (#view-...) + first paint
     (function initPage() {
-      buildViewCache();
-      updateScrollEffects();
+      initReveal();
+      updateBar();
       const h = (location.hash || '').replace('#', '');
       if (h && h !== 'home' && document.getElementById('view-' + h)) {
         setTimeout(() => navigate(h), 150);
