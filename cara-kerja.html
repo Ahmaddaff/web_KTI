@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cara Kerja Kontrak — Juraganweb</title>
+  <meta name="description" content="Alur kerja kontrak Juraganweb dalam 4 langkah: diskusi & MoU, perencanaan desain, pengiriman materi, lalu publish dan serah terima." />
+
+  <!-- Google Fonts: Space Grotesk (display) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['"Space Grotesk"', 'Inter', 'sans-serif']
+          },
+          colors: {
+            ink: { 950:'#06070B', 900:'#0A0B11', 850:'#0E1017', 800:'#14161F', 700:'#1C2030', 600:'#262B3D' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    /* ===== TYPOGRAPHY & TEXT COLORS ===== */
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body.text-slate-200 { color: #C9D3E6; }
+    h1, h2, h3, h4, h5,
+    body .font-extrabold,
+    body .font-display {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      letter-spacing: -0.015em;
+    }
+    body .text-white  { color: #F7F9FF; }
+    body .text-slate-200 { color: #E7ECF8; }
+    body .text-slate-300 { color: #C9D3E6; }
+    body .text-slate-400 { color: #9CA7C1; }
+    body .text-slate-500 { color: #7B87A1; }
+    body .text-slate-600 { color: #5E6A83; }
+    body .text-cyan-300 { color: #67E8F9; }
+    body .text-orange-300 { color: #FDBA74; }
+
+    /* ===== AUTO-HIDE HEADER (smooth) ===== */
+    #siteHeader {
+      transition: transform .55s cubic-bezier(.22, 1, .36, 1);
+      will-change: transform;
+    }
+    #siteHeader.header-hidden { transform: translateY(-100%); }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #06070B; }
+    ::-webkit-scrollbar-thumb { background: #1C2030; border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: #262B3D; }
+    .glow-text { text-shadow: 0 0 26px rgba(34,211,238,0.35); }
+
+    /* ============ AURORA BACKGROUND (animated blue + red) ============ */
+    .aurora-blob {
+      position: absolute; border-radius: 9999px; filter: blur(85px);
+      will-change: transform, opacity; pointer-events: none;
+    }
+    .blob-blue {
+      width: 680px; height: 680px; left: -14%; top: -12%;
+      background: radial-gradient(circle at 45% 45%, rgba(59,130,246,0.55), rgba(37,99,235,0.18) 55%, transparent 72%);
+      animation: driftBlue 18s ease-in-out infinite;
+    }
+    .blob-red {
+      width: 640px; height: 640px; right: -14%; top: -10%;
+      background: radial-gradient(circle at 55% 45%, rgba(249,115,22,0.50), rgba(239,68,68,0.20) 55%, transparent 72%);
+      animation: driftRed 21s ease-in-out infinite;
+    }
+    .blob-cyan {
+      width: 420px; height: 420px; left: 38%; top: 46%;
+      background: radial-gradient(circle at 50% 50%, rgba(34,211,238,0.20), transparent 70%);
+      animation: driftCyan 15s ease-in-out infinite;
+    }
+    @keyframes driftBlue {
+      0%,100% { transform: translate3d(0,0,0) scale(1); opacity: .85; }
+      50%     { transform: translate3d(6%,5%,0) scale(1.16); opacity: 1; }
+    }
+    @keyframes driftRed {
+      0%,100% { transform: translate3d(0,0,0) scale(1); opacity: .8; }
+      50%     { transform: translate3d(-6%,4%,0) scale(1.14); opacity: 1; }
+    }
+    @keyframes driftCyan {
+      0%,100% { transform: translate3d(-4%,0,0) scale(1); opacity: .5; }
+      50%     { transform: translate3d(4%,-4%,0) scale(1.2); opacity: .9; }
+    }
+
+    /* SVG light streaks */
+    .aurora-streaks { position: absolute; inset: 0; width: 100%; height: 100%; filter: blur(28px); }
+    .aurora-streaks path { transform-box: fill-box; transform-origin: center; }
+    .streak-blue  { animation: blueFlow 13s ease-in-out infinite; }
+    .streak-blue2 { animation: blueFlow 16s ease-in-out infinite reverse; }
+    .streak-red   { animation: redFlow 15s ease-in-out infinite; }
+    .streak-red2  { animation: redFlow 18s ease-in-out infinite reverse; }
+    @keyframes blueFlow {
+      0%,100% { opacity: .4; transform: translateX(-10px) scaleY(1); }
+      50%     { opacity: .95; transform: translateX(16px) scaleY(1.05); }
+    }
+    @keyframes redFlow {
+      0%,100% { opacity: .4; transform: translateX(10px) scaleY(1); }
+      50%     { opacity: .95; transform: translateX(-16px) scaleY(1.05); }
+    }
+
+    /* ---- rotating conic colour wash (the slow "breathing" of the page) ---- */
+    #bgConic {
+      background: conic-gradient(from 0deg,
+        rgba(37,99,235,0.62) 0deg,
+        rgba(34,211,238,0.40) 58deg,
+        rgba(59,130,246,0.12) 118deg,
+        rgba(249,115,22,0.44) 204deg,
+        rgba(239,68,68,0.30) 258deg,
+        rgba(99,102,241,0.44) 316deg,
+        rgba(37,99,235,0.62) 360deg);
+      /* no blur(): a conic gradient already interpolates smoothly, and a
+         blurred 130vmax surface was heavy enough to starve smooth scrolling */
+      opacity: .27;
+      will-change: transform;
+      animation: conicSpin 50s linear infinite;
+    }
+    @keyframes conicSpin {
+      from { transform: translate(-50%,-50%) rotate(0deg); }
+      to   { transform: translate(-50%,-50%) rotate(360deg); }
+    }
+
+    /* ---- drifting dot matrix ---- */
+    #bgGrid {
+      --gs: 36px;
+      background-image: radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1.4px);
+      background-size: var(--gs) var(--gs);
+      will-change: transform;
+      animation: gridDrift 24s linear infinite;
+    }
+    @keyframes gridDrift {
+      from { transform: translate3d(0,0,0); }
+      to   { transform: translate3d(var(--gs), var(--gs), 0); }
+    }
+
+    /* ---- film grain for a less "flat digital" surface ---- */
+    #bgGrain {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.6'/></svg>");
+      background-size: 160px 160px;
+      opacity: .055;
+      animation: grainShift 7s steps(5) infinite;
+    }
+    @keyframes grainShift {
+      0%   { transform: translate3d(0,0,0); }
+      20%  { transform: translate3d(-3%,2%,0); }
+      40%  { transform: translate3d(2%,-3%,0); }
+      60%  { transform: translate3d(-2%,-2%,0); }
+      80%  { transform: translate3d(3%,1%,0); }
+      100% { transform: translate3d(0,0,0); }
+    }
+
+    #bgParticles { display: block; }
+
+    /* ---- periodic light sweep: a soft beam crossing the page ---- */
+    #bgSweep {
+      position: absolute; inset: -20%;
+      background: linear-gradient(103deg,
+        transparent 38%,
+        rgba(125,211,252,0.16) 47%,
+        rgba(186,230,253,0.22) 50%,
+        rgba(253,186,116,0.14) 54%,
+        transparent 64%);
+      will-change: transform, opacity;
+      animation: sweep 16s cubic-bezier(.45,0,.55,1) infinite;
+    }
+    @keyframes sweep {
+      0%   { transform: translate3d(-72%,0,0); opacity: 0; }
+      7%   { opacity: .85; }
+      52%  { opacity: .85; }
+      62%  { transform: translate3d(72%,0,0); opacity: 0; }
+      100% { transform: translate3d(72%,0,0); opacity: 0; }
+    }
+
+    /* on narrow screens: looser grid, softer wash, so it stays calm behind text */
+    @media (max-width: 640px) {
+      #bgGrid {
+        --gs: 46px;
+        background-image: radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1.4px);
+      }
+      #bgConic { opacity: .20; }
+      #bgGrain { display: none; }   /* saves a composited layer on phones */
+    }
+
+    /* ============ ONE-PAGE SCROLL SECTIONS ============ */
+    .view { display: block; scroll-margin-top: 96px; position: relative; }
+    .view + .view { border-top: 1px solid rgba(255,255,255,0.045); }
+    .view.view-enter { animation: viewIn .55s cubic-bezier(.22,1,.36,1) both; }
+
+    /* scroll-driven "widen while rising" effect (all sections, incl. hero).
+       No transition here: the values are already written every animation frame,
+       and a transition on top of that makes the box chase its target and lag. */
+    .view > div:first-child {
+      transform: translate3d(0, var(--ty, 0px), 0) scaleX(var(--exp, 1));
+      transform-origin: center top;
+      opacity: var(--op, 1);
+      will-change: transform;
+    }
+
+    /* divider: light beam that fires outward from the center as the section arrives */
+    .view:not(#view-home)::before {
+      content: '';
+      position: absolute; top: 0; left: 50%;
+      width: 100%; height: 3px;
+      transform: translateX(-50%) scaleX(var(--rule, 0));
+      transform-origin: center;
+      background: linear-gradient(90deg,
+        rgba(59,130,246,0) 0%,
+        rgba(59,130,246,.85) 16%,
+        rgba(34,211,238,1) 50%,
+        rgba(59,130,246,.85) 84%,
+        rgba(59,130,246,0) 100%);
+      box-shadow: 0 0 22px rgba(34,211,238,.7), 0 0 60px rgba(59,130,246,.45);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+    @keyframes viewIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* nav active indicator */
+    .nav-link { position: relative; }
+    .nav-link.nav-active { color: #fff; }
+    .nav-link.nav-active::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: -7px; height: 2px; border-radius: 2px;
+      background: linear-gradient(90deg, #3b82f6, #22d3ee);
+      box-shadow: 0 0 12px rgba(34,211,238,.85);
+    }
+
+    /* route progress bar */
+    #routeBar {
+      position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+      background: linear-gradient(90deg, #3b82f6, #22d3ee, #f97316);
+      box-shadow: 0 0 10px rgba(34,211,238,.9);
+      z-index: 80; transition: opacity .3s ease; opacity: 1;
+    }
+
+    /* card hover lift */
+    .lift { transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease; }
+    .lift:hover { transform: translateY(-4px); }
+
+    /* ============ CURSOR-FOLLOW GLOW ============ */
+    #cursorGlow {
+      position: absolute; left: 0; top: 0; width: 620px; height: 620px; border-radius: 9999px;
+      transform: translate3d(-50%,-50%,0); pointer-events: none; opacity: 0;
+      background:
+        radial-gradient(circle at 62% 62%, rgba(249,115,22,0.16), transparent 46%),
+        radial-gradient(circle, rgba(59,130,246,0.34), rgba(34,211,238,0.14) 42%, transparent 70%);
+      mix-blend-mode: screen; transition: opacity .45s ease; will-change: transform;
+    }
+    #cursorRing {
+      position: fixed; left: 0; top: 0; width: 18px; height: 18px; border-radius: 9999px;
+      border: 1.5px solid rgba(34,211,238,0.85); box-shadow: 0 0 14px rgba(34,211,238,0.75);
+      transform: translate3d(-50%,-50%,0); pointer-events: none; opacity: 0; z-index: 70;
+      transition: opacity .3s ease, width .2s ease, height .2s ease, border-color .2s ease; will-change: transform;
+    }
+    @media (hover: none), (pointer: coarse) { #cursorGlow, #cursorRing { display: none !important; } }
+
+    /* ============ DASHBOARD ANIMATIONS ============ */
+    .dash-scan {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(110deg, transparent 32%, rgba(34,211,238,0.10) 50%, transparent 68%);
+      background-size: 240% 100%;
+      animation: dashScan 6.5s linear infinite;
+    }
+    @keyframes dashScan { 0% { background-position: 220% 0; } 100% { background-position: -120% 0; } }
+
+    .dash-card { position: relative; overflow: hidden; transition: border-color .3s ease, transform .3s ease; }
+    .dash-card:hover { border-color: rgba(34,211,238,0.35); transform: translateY(-2px); }
+    .dash-card::before {
+      content: ''; position: absolute; left: 0; top: 0; height: 2px; width: 100%;
+      background: linear-gradient(90deg, transparent, rgba(34,211,238,0.7), transparent);
+      transform: translateX(-100%); animation: cardSweep 4.5s ease-in-out infinite;
+    }
+    @keyframes cardSweep { 0%,55% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+    .dash-bar { height: 0; border-radius: 4px 4px 0 0; }
+    .view.active .dash-bar { animation: growBar 1s cubic-bezier(.22,1,.36,1) both; }
+    @keyframes growBar { from { height: 0; opacity: .3; } to { height: var(--h); opacity: 1; } }
+
+    .dash-row { opacity: 0; transform: translateX(-8px); }
+    .view.active .dash-row { animation: rowIn .5s ease forwards; }
+    @keyframes rowIn { to { opacity: 1; transform: translateX(0); } }
+
+    .live-dot { position: relative; display: inline-flex; width: 7px; height: 7px; border-radius: 9999px; background: #22d3ee; }
+    .live-dot::after { content: ''; position: absolute; inset: -3px; border-radius: 9999px; border: 1px solid rgba(34,211,238,.8); animation: livePing 1.6s ease-out infinite; }
+    @keyframes livePing { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.4); opacity: 0; } }
+
+    .sidebar-active::after {
+      content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 3px; border-radius: 3px;
+      background: linear-gradient(#22d3ee, #3b82f6); box-shadow: 0 0 12px rgba(34,211,238,.9);
+      animation: barPulse 2s ease-in-out infinite;
+    }
+    @keyframes barPulse { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+
+    .counter { font-variant-numeric: tabular-nums; }
+
+    .dash-panel.panel-enter { animation: viewIn .45s cubic-bezier(.22,1,.36,1) both; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .aurora-blob, .aurora-streaks path { animation: none !important; }
+      #bgConic, #bgGrid, #bgGrain, #bgSweep { animation: none !important; }
+      #bgConic { transform: translate(-50%,-50%) !important; }
+      #bgSweep { opacity: 0 !important; }
+      .view.view-enter { animation: none !important; }
+      .view > div:first-child { transform: none !important; opacity: 1 !important; transition: none !important; }
+      .view:not(#view-home)::before { transform: translateX(-50%) scaleX(1) !important; transition: none !important; }
+      .dash-scan, .dash-card::before, .dash-bar, .dash-row, .live-dot::after, .sidebar-active::after { animation: none !important; }
+      .dash-row { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body class="bg-ink-950 text-slate-200 font-sans antialiased selection:bg-blue-500/30 selection:text-white overflow-x-hidden">
+
+  <!-- ROUTE PROGRESS BAR -->
+  <div id="routeBar"></div>
+
+  <!-- CUSTOM CURSOR RING -->
+  <div id="cursorRing" aria-hidden="true"></div>
+
+  <!-- PERSISTENT ANIMATED BACKGROUND (conic wash + aurora + dots + motes + grain) -->
+  <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+
+    <!-- 1. slow rotating conic colour wash -->
+    <div id="bgConic" class="absolute left-1/2 top-1/2 w-[130vmax] h-[130vmax]"></div>
+
+    <!-- 2. aurora blobs -->
+    <div id="auroraLayer" class="absolute inset-0">
+      <div class="aurora-blob blob-blue"></div>
+      <div class="aurora-blob blob-red"></div>
+      <div class="aurora-blob blob-cyan"></div>
+    </div>
+
+    <!-- 3. drifting dot matrix, faded out at the edges -->
+    <div class="absolute inset-0" style="mask-image:radial-gradient(ellipse 85% 75% at 50% 42%, #000 18%, transparent 76%);-webkit-mask-image:radial-gradient(ellipse 85% 75% at 50% 42%, #000 18%, transparent 76%);">
+      <div id="bgGrid" class="absolute inset-[-48px]"></div>
+    </div>
+
+    <!-- 4. floating light motes -->
+    <canvas id="bgParticles" class="absolute inset-0 w-full h-full"></canvas>
+
+    <!-- 5. periodic light sweep -->
+    <div id="bgSweep"></div>
+
+    <!-- 6. film grain -->
+    <div id="bgGrain" class="absolute inset-[-10%]"></div>
+
+    <!-- cursor-follow glow -->
+    <div id="cursorGlow" aria-hidden="true"></div>
+  </div>
+
+  <!-- STICKY HEADER (auto-hide on scroll down) -->
+  <header id="siteHeader" class="sticky top-0 z-50 will-change-transform">
+  <!-- NAVIGATION BAR -->
+  <nav class="bg-ink-900/70 backdrop-blur-xl border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+
+      <!-- LOGO -->
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_22px_-2px_rgba(59,130,246,0.7)] group-hover:scale-105 transition">J</div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight text-white block leading-none">JURAGAN<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">WEB</span></span>
+          <span class="text-[10px] tracking-wider text-slate-500 uppercase font-semibold block mt-0.5">Software & Web Agency</span>
+        </div>
+      </a>
+
+      <!-- DESKTOP MENU -->
+      <div class="hidden lg:flex items-center space-x-8 font-medium text-slate-300 text-sm">
+        <a href="modul.html" data-link="modul" class="nav-link hover:text-cyan-300 transition">Modul Sistem</a>
+        <a href="cara-kerja.html" data-link="proses" aria-current="page" class="nav-link nav-active hover:text-cyan-300 transition">Cara Kerja Kontrak</a>
+        <a href="biaya.html" data-link="biaya" class="nav-link hover:text-cyan-300 transition">Biaya Proyek</a>
+        <a href="portofolio.html" data-link="portfolio" class="nav-link hover:text-cyan-300 transition">Portofolio</a>
+        <a href="faq.html" data-link="faq" class="nav-link hover:text-cyan-300 transition">FAQ</a>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="hidden sm:flex items-center space-x-3">
+        <button onclick="openEstimatorModal()" class="px-4 py-2.5 rounded-full border border-white/15 text-slate-200 text-sm font-semibold hover:border-cyan-400/60 hover:text-cyan-300 transition flex items-center gap-2">
+          <i data-lucide="calculator" class="w-4 h-4"></i> Hitung Estimasi
+        </button>
+        <a href="https://wa.me/6281818133968?text=Halo%20Juraganweb,%20saya%20ingin%20konsultasi%20pembuatan%20website/sistem%20dengan%20sistem%20kontrak%20proyek." target="_blank" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)] transition flex items-center gap-2">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> Konsultasi WhatsApp
+        </a>
+      </div>
+
+      <!-- MOBILE MENU BUTTON -->
+      <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg border border-white/10 text-slate-200 hover:text-cyan-300" aria-label="Buka menu">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="hidden lg:hidden border-t border-white/5 bg-ink-900/95 backdrop-blur-xl">
+      <div class="px-4 py-4 space-y-1 text-sm">
+        <a href="index.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Beranda</a>
+        <a href="modul.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Modul Sistem</a>
+        <a href="cara-kerja.html" aria-current="page" class="block px-3 py-2.5 rounded-lg text-cyan-300 font-semibold bg-white/5 hover:bg-white/5 hover:text-cyan-300">Cara Kerja Kontrak</a>
+        <a href="biaya.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Biaya Proyek</a>
+        <a href="portofolio.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Portofolio</a>
+        <a href="faq.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">FAQ</a>
+        <div class="pt-2 grid grid-cols-1 gap-2">
+          <button onclick="openEstimatorModal(); toggleMobileMenu(false)" class="w-full px-4 py-2.5 rounded-full border border-white/15 text-slate-200 text-sm font-semibold">Hitung Estimasi</button>
+          <a href="https://wa.me/6281818133968" target="_blank" class="w-full px-4 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold text-center">Konsultasi WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  </header>
+
+  <!-- ================= PAGE CONTENT ================= -->
+  <main id="app">
+
+<!-- ============ VIEW: PROSES ============ -->
+    <section data-view="proses" id="view-proses" class="view">
+      <div class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Proses Kerja Transparan</h2>
+            <p class="text-2xl sm:text-3xl font-extrabold text-white">Bagaimana Proses Kontrak Pengerjaan Website?</p>
+            <p class="text-slate-400 text-sm mt-2">4 Langkah sederhana dari kesepakatan awal hingga website siap online.</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">1</div>
+              <h3 class="font-bold text-white text-base mb-2">Order &amp; Diskusi Kontrak</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">Pilih paket atau modul. Kami buatkan draf kesepakatan lingkup kerja (MoU).</p>
+            </div>
+            <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">2</div>
+              <h3 class="font-bold text-white text-base mb-2">Perencanaan &amp; Desain</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">Pilih referensi tampilan. Kami susun struktur halaman dan navigasi sistem.</p>
+            </div>
+            <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-orange-500/40">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-orange-500 to-red-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(249,115,22,0.7)]">3</div>
+              <h3 class="font-bold text-white text-base mb-2">Pengiriman Materi</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">Kirimkan logo, profil usaha, atau daftar produk. Tim kami yang input layoutnya.</p>
+            </div>
+            <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">4</div>
+              <h3 class="font-bold text-white text-base mb-2">Publish &amp; Serah Terima</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">Website diluncurkan. Seluruh akses login, source code, dan panduan diserahkan.</p>
+            </div>
+          </div>
+
+          <div class="text-center mt-10">
+            <a href="biaya.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(249,115,22,0.7)]">Lihat Paket &amp; Biaya <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-ink-950/80 text-white pt-12 pb-8 border-t border-white/10 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 pb-8 border-b border-white/10 text-xs">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center font-bold text-white text-base shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">J</div>
+            <span class="font-extrabold text-lg">JURAGAN<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">WEB</span></span>
+          </div>
+          <p class="text-slate-400 leading-relaxed mb-4">Penyedia jasa pembuatan website &amp; digital system berpengalaman. Membantu UMKM, mahasiswa, dan perusahaan berkembang secara digital.</p>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 text-[10px] font-semibold border border-cyan-500/30">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Kontrak Beli Putus (Hak Milik 100%)
+          </div>
+        </div>
+        <div>
+          <h4 class="font-bold text-cyan-400 text-sm mb-3">Layanan Modul</h4>
+          <ul class="space-y-2 text-slate-300">
+            <li>• Jasa Web Kasir &amp; Stok UMKM</li>
+            <li>• Jasa System Booking &amp; Reservasi</li>
+            <li>• Platform Invoice PDF Generator</li>
+            <li>• Web CV &amp; Portofolio ATS</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold text-cyan-400 text-sm mb-3">Sistem Kontrak</h4>
+          <ul class="space-y-2 text-slate-300">
+            <li>• Beli Putus (Hak Milik 100%)</li>
+            <li>• Garansi Bebas Bug</li>
+            <li>• Kontrak Maintenance Ad-Hoc</li>
+            <li>• Perhitungan Estimasi Transparan</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold text-cyan-400 text-sm mb-3">Kontak Resmi</h4>
+          <p class="text-slate-300 leading-relaxed mb-2">Surabaya &amp; Online Service Center</p>
+          <p class="text-slate-300 mb-1 flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5 text-cyan-400"></i> WhatsApp: +62 818-1813-3968</p>
+          <p class="text-slate-300 mb-1 flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5 text-orange-400"></i> Senin - Jumat (09:00 - 17:00 WIB)</p>
+          <p class="text-slate-300 flex items-center gap-1.5"><i data-lucide="mail" class="w-3.5 h-3.5 text-cyan-400"></i> info@juraganweb.com</p>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-500">
+        <p>© 2018-2026 Juraganweb - Jasa Pembuatan Website &amp; System Properti.</p>
+        <p class="mt-2 sm:mt-0">Model Kontrak Kerja Proyek Beli Putus</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL ESTIMATOR -->
+  <div id="estimatorModal" class="fixed inset-0 bg-ink-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-ink-900 rounded-2xl max-w-lg w-full p-6 shadow-[0_0_60px_-15px_rgba(59,130,246,0.5)] border border-white/10 relative max-h-[90vh] overflow-y-auto">
+      <button onclick="closeEstimatorModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <div class="mb-4 border-b border-white/10 pb-3">
+        <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block">Kalkulator Proyek</span>
+        <h3 class="text-lg font-bold text-white">Simulasi Biaya Kontrak Website</h3>
+        <p class="text-slate-400 text-xs">Pilih modul yang ingin Anda masukkan ke dalam satu kontrak pengerjaan.</p>
+      </div>
+      <div class="space-y-3 mb-6 text-xs">
+        <label class="flex items-center justify-between p-3 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer bg-white/5">
+          <div class="flex items-center gap-2"><input type="checkbox" id="mod-cv" onchange="calculateCost()" class="w-4 h-4 text-cyan-400 rounded bg-ink-800"><span class="text-slate-200">CV &amp; Portofolio Digital</span></div>
+          <span class="font-bold text-slate-300">+ Rp 250.000</span>
+        </label>
+        <label class="flex items-center justify-between p-3 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer bg-white/5">
+          <div class="flex items-center gap-2"><input type="checkbox" id="mod-kasir" onchange="calculateCost()" class="w-4 h-4 text-cyan-400 rounded bg-ink-800" checked><span class="text-slate-200">Manajemen Kasir &amp; Stok UMKM</span></div>
+          <span class="font-bold text-slate-300">+ Rp 500.000</span>
+        </label>
+        <label class="flex items-center justify-between p-3 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer bg-white/5">
+          <div class="flex items-center gap-2"><input type="checkbox" id="mod-booking" onchange="calculateCost()" class="w-4 h-4 text-cyan-400 rounded bg-ink-800"><span class="text-slate-200">Sistem Booking / Reservasi Jadwal</span></div>
+          <span class="font-bold text-slate-300">+ Rp 450.000</span>
+        </label>
+        <label class="flex items-center justify-between p-3 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer bg-white/5">
+          <div class="flex items-center gap-2"><input type="checkbox" id="mod-invoice" onchange="calculateCost()" class="w-4 h-4 text-cyan-400 rounded bg-ink-800"><span class="text-slate-200">Invoice Generator &amp; Tagihan PDF</span></div>
+          <span class="font-bold text-slate-300">+ Rp 300.000</span>
+        </label>
+        <label class="flex items-center justify-between p-3 border border-white/10 rounded-lg hover:bg-white/5 cursor-pointer bg-white/5">
+          <div class="flex items-center gap-2"><input type="checkbox" id="mod-org" onchange="calculateCost()" class="w-4 h-4 text-cyan-400 rounded bg-ink-800"><span class="text-slate-200">Project Management &amp; LPJ Organisasi</span></div>
+          <span class="font-bold text-slate-300">+ Rp 400.000</span>
+        </label>
+        <div class="pt-2 border-t border-white/10">
+          <label class="block text-slate-200 font-bold mb-1">Pilih Garansi Maintenance di Awal:</label>
+          <select id="maint-option" onchange="calculateCost()" class="w-full p-2 border border-white/10 rounded text-xs bg-ink-850 text-slate-200">
+            <option value="0">Garansi Standar (1 Bulan Gratis)</option>
+            <option value="200000">Perpanjang Garansi 3 Bulan (+ Rp 200.000)</option>
+            <option value="450000">Perpanjang Garansi 6 Bulan (+ Rp 450.000)</option>
+          </select>
+        </div>
+      </div>
+      <div class="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl mb-4 text-xs flex justify-between items-center">
+        <div><span class="text-slate-300 block">Estimasi Total Biaya Kontrak:</span><span class="text-[11px] text-slate-500">*Beli Putus + Hak Milik 100%</span></div>
+        <span id="totalCostDisplay" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">Rp 700.000</span>
+      </div>
+      <button onclick="sendEstimatorWA()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs rounded-full transition flex items-center justify-center gap-2 shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)]"><i data-lucide="message-circle" class="w-4 h-4"></i> Kirim Estimasi ke WhatsApp Juraganweb</button>
+    </div>
+  </div>
+
+  <!-- ================= APP LOGIC ================= -->
+  <script>
+    lucide.createIcons();
+
+    /* ---------- AUTO-HIDE HEADER ON SCROLL (smooth + hysteresis) ---------- */
+    (function initHeaderHide() {
+      const header = document.getElementById('siteHeader');
+      if (!header) return;
+      let lastY = window.scrollY || 0;
+      let acc = 0;
+      let hidden = false;
+      let ticking = false;
+      const HIDE_AFTER = 28;   // net px scrolled down before hiding
+      const SHOW_AFTER = 16;   // net px scrolled up before revealing
+      const TOP_ZONE = 24;     // always visible near the very top
+
+      function setHidden(v) {
+        if (hidden === v) return;
+        hidden = v;
+        header.classList.toggle('header-hidden', v);
+      }
+
+      function onScroll() {
+        const y = window.scrollY || window.pageYOffset || 0;
+        const d = y - lastY;
+        lastY = y;
+
+        if (y <= TOP_ZONE) { acc = 0; setHidden(false); ticking = false; return; }
+
+        acc += d;
+        if (acc > HIDE_AFTER && y > 120) {
+          setHidden(true);
+          acc = 0;
+        } else if (acc < -SHOW_AFTER) {
+          setHidden(false);
+          acc = 0;
+        }
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+      }, { passive: true });
+    })();
+
+    /* ---------- FLOATING BACKGROUND MOTES ---------- */
+    (function initMotes() {
+      const cv = document.getElementById('bgParticles');
+      if (!cv || !cv.getContext) return;
+      const ctx = cv.getContext('2d');
+      if (!ctx) return;
+
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const COLORS = [
+        'rgba(34,211,238,',  // cyan
+        'rgba(96,165,250,',  // blue
+        'rgba(251,146,60,',  // orange
+        'rgba(226,232,240,', // near-white
+      ];
+      let w = 0, h = 0, dpr = 1, parts = [], raf = null;
+
+      function size() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = cv.clientWidth || window.innerWidth;
+        h = cv.clientHeight || window.innerHeight;
+        cv.width = Math.round(w * dpr);
+        cv.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function build() {
+        // fewer motes on small screens so phones stay smooth
+        const target = Math.round((w * h) / 24000);
+        const count = Math.max(16, Math.min(w < 640 ? 28 : 60, target));
+        parts = Array.from({ length: count }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: 0.7 + Math.random() * 1.8,
+          vy: 0.10 + Math.random() * 0.34,
+          vx: (Math.random() - 0.5) * 0.10,
+          a: 0.10 + Math.random() * 0.34,
+          ph: Math.random() * Math.PI * 2,
+          c: COLORS[(Math.random() * COLORS.length) | 0],
+        }));
+      }
+
+      function draw(t) {
+        ctx.clearRect(0, 0, w, h);
+        for (const p of parts) {
+          if (!reduce) {
+            p.y -= p.vy;
+            p.x += p.vx + Math.sin(t / 2600 + p.ph) * 0.16;
+            if (p.y < -8) { p.y = h + 8; p.x = Math.random() * w; }
+            if (p.x < -8) p.x = w + 8;
+            if (p.x > w + 8) p.x = -8;
+          }
+          const tw = 0.7 + 0.3 * Math.sin(t / 1400 + p.ph);
+          // soft halo
+          ctx.beginPath();
+          ctx.fillStyle = p.c + (p.a * tw * 0.3).toFixed(3) + ')';
+          ctx.arc(p.x, p.y, p.r * 2.8, 0, Math.PI * 2);
+          ctx.fill();
+          // bright core
+          ctx.beginPath();
+          ctx.fillStyle = p.c + (p.a * tw).toFixed(3) + ')';
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        raf = requestAnimationFrame(draw);
+      }
+
+      size();
+      build();
+
+      if (reduce) {
+        draw(0);
+        cancelAnimationFrame(raf);
+        raf = null;
+      } else {
+        raf = requestAnimationFrame(draw);
+      }
+
+      let rt;
+      window.addEventListener('resize', () => {
+        clearTimeout(rt);
+        rt = setTimeout(() => { size(); build(); }, 180);
+      }, { passive: true });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          cancelAnimationFrame(raf);
+          raf = null;
+        } else if (!reduce && !raf) {
+          raf = requestAnimationFrame(draw);
+        }
+      });
+    })();
+
+    /* ---------- CURSOR-FOLLOW GLOW + AURORA PARALLAX ---------- */
+    (function initCursor() {
+      const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!fine) return;
+      const glow = document.getElementById('cursorGlow');
+      const ring = document.getElementById('cursorRing');
+      const layer = document.getElementById('auroraLayer');
+      let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
+      let cx = tx, cy = ty, visible = false;
+
+      window.addEventListener('mousemove', (e) => {
+        tx = e.clientX; ty = e.clientY;
+        if (!visible) {
+          visible = true;
+          if (glow) glow.style.opacity = '1';
+          if (ring) ring.style.opacity = '1';
+        }
+      });
+      window.addEventListener('mouseleave', () => {
+        visible = false;
+        if (glow) glow.style.opacity = '0';
+        if (ring) ring.style.opacity = '0';
+      });
+
+      // enlarge ring when hovering interactive elements
+      document.addEventListener('mouseover', (e) => {
+        if (ring && e.target.closest('a, button, input, select, label')) {
+          ring.style.width = '34px'; ring.style.height = '34px';
+          ring.style.borderColor = 'rgba(249,115,22,0.9)';
+        }
+      });
+      document.addEventListener('mouseout', (e) => {
+        if (ring && e.target.closest('a, button, input, select, label')) {
+          ring.style.width = '18px'; ring.style.height = '18px';
+          ring.style.borderColor = 'rgba(34,211,238,0.85)';
+        }
+      });
+
+      // 3D tilt on dashboard card following cursor
+      const card = document.getElementById('dashboardCard');
+      if (card) {
+        card.addEventListener('mousemove', (e) => {
+          const r = card.getBoundingClientRect();
+          const rx = ((e.clientY - r.top) / r.height - 0.5) * -6;
+          const ry = ((e.clientX - r.left) / r.width - 0.5) * 6;
+          card.style.transform = 'perspective(1100px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      }
+
+      function loop() {
+        cx += (tx - cx) * 0.12;
+        cy += (ty - cy) * 0.12;
+        if (glow) glow.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0) translate(-50%,-50%)';
+        if (ring) ring.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0) translate(-50%,-50%)';
+        if (layer) {
+          const px = (tx / window.innerWidth - 0.5);
+          const py = (ty / window.innerHeight - 0.5);
+          layer.style.transform = 'translate3d(' + (px * -26) + 'px,' + (py * -26) + 'px,0)';
+        }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+
+    /* ---------- DASHBOARD COUNTERS ---------- */
+    function animateCounters() {
+      document.querySelectorAll('#dashboard .counter').forEach(el => {
+        const target = parseFloat(el.dataset.target || '0');
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const dur = 1200;
+        const start = performance.now();
+        function step(now) {
+          const p = Math.min((now - start) / dur, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          const val = Math.round(target * eased);
+          el.textContent = prefix + val.toLocaleString('id-ID') + suffix;
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    }
+
+    /* ---------- DASHBOARD MINI-APP SWITCHER ---------- */
+    function dashSwitch(key) {
+      document.querySelectorAll('#dashboard .dash-panel').forEach(p => p.classList.add('hidden'));
+      const panel = document.getElementById('dash-panel-' + key);
+      if (panel) {
+        panel.classList.remove('hidden');
+        panel.classList.remove('panel-enter');
+        void panel.offsetWidth;
+        panel.classList.add('panel-enter');
+      }
+
+      const keys = ['overview', 'kasir', 'booking', 'invoice', 'cv'];
+      const navActive = 'dash-nav sidebar-active relative w-full text-left p-2 rounded bg-gradient-to-r from-blue-600/30 to-cyan-500/20 text-cyan-200 font-bold text-xs flex items-center gap-2 border border-cyan-500/30 overflow-hidden';
+      const navIdle   = 'dash-nav relative w-full text-left p-2 rounded text-slate-400 hover:bg-white/5 text-xs flex items-center gap-2 overflow-hidden';
+      const tabActive = 'dash-mtab whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-semibold bg-gradient-to-r from-blue-600 to-cyan-500 text-white';
+      const tabIdle   = 'dash-mtab whitespace-nowrap px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/5 text-slate-400 border border-white/10';
+
+      keys.forEach(k => {
+        const nav = document.getElementById('dash-nav-' + k);
+        const tab = document.getElementById('dash-mtab-' + k);
+        if (nav) nav.className = (k === key ? navActive : navIdle);
+        if (tab) tab.className = (k === key ? tabActive : tabIdle);
+      });
+
+      if (key === 'overview') setTimeout(animateCounters, 60);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ---------- PAGE ENTRANCE + SCROLL ANIMATION ----------
+       Every page now holds exactly one section, so the "widen while rising"
+       move plays as the page enters instead of as the section scrolls into
+       view. The exit fade stays scroll-linked, with the same formula as before.
+       One pass per frame: read every rect first, then write every style —
+       mixing reads and writes forces a synchronous reflow each time. */
+    const viewCache = [];
+    let enterP = 0;
+
+    function buildViewCache() {
+      viewCache.length = 0;
+      document.querySelectorAll('.view').forEach((el) => {
+        viewCache.push({ el, inner: el.firstElementChild });
+      });
+    }
+
+    function updateScrollEffects() {
+      const vh = window.innerHeight;
+      const y = window.scrollY;
+
+      /* ---- READ PHASE (single layout flush) ---- */
+      const geo = [];
+      for (let i = 0; i < viewCache.length; i++) {
+        const r = viewCache[i].el.getBoundingClientRect();
+        geo.push({ bottom: r.bottom, height: r.height });
+      }
+      const docH = document.documentElement.scrollHeight;
+
+      /* ---- WRITE PHASE ---- */
+      for (let i = 0; i < viewCache.length; i++) {
+        const v = viewCache[i];
+        const g = geo[i];
+        const h = g.height > 1 ? g.height : 1;
+
+        let pExit = (g.bottom - h * 0.3) / (h * 0.3);
+        pExit = pExit < 0 ? 0 : pExit > 1 ? 1 : pExit;
+
+        const pEnter = enterP;
+        const p = pEnter < pExit ? pEnter : pExit;
+        const exp = 0.83 + 0.17 * p;
+        const ty = (1 - pEnter) * 110;
+
+        const a = pEnter / 0.65 > 1 ? 1 : pEnter / 0.65;
+        const b = pExit / 0.6 > 1 ? 1 : pExit / 0.6;
+        const opA = 0.5 + 0.5 * a;
+        const opB = 0.8 + 0.2 * b;
+        const op = opA < opB ? opA : opB;
+
+        if (v.inner) {
+          v.inner.style.transform =
+            'translate3d(0,' + ty.toFixed(1) + 'px,0) scaleX(' + exp.toFixed(4) + ')';
+          v.inner.style.opacity = op.toFixed(3);
+        }
+        v.el.style.setProperty('--rule', (pEnter * 1.8 > 1 ? 1 : pEnter * 1.8).toFixed(3));
+      }
+
+      const bar = document.getElementById('routeBar');
+      if (bar) {
+        const max = docH - vh;
+        bar.style.width = (max > 0 ? (y / max) * 100 : 0).toFixed(2) + '%';
+      }
+    }
+
+    /* entrance: 0 -> 1 over ~780ms, ease-out, so the box widens as it settles */
+    function runEntrance() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        enterP = 1;
+        updateScrollEffects();
+        return;
+      }
+      const DUR = 780;
+      const t0 = performance.now();
+      (function step(now) {
+        const t = Math.min((now - t0) / DUR, 1);
+        enterP = 1 - Math.pow(1 - t, 3);
+        updateScrollEffects();
+        if (t < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+
+    let spyTicking = false;
+    window.addEventListener('scroll', () => {
+      if (!spyTicking) {
+        spyTicking = true;
+        requestAnimationFrame(() => { spyTicking = false; updateScrollEffects(); });
+      }
+    }, { passive: true });
+
+    window.addEventListener('resize', () => {
+      buildViewCache();
+      updateScrollEffects();
+    }, { passive: true });
+
+    (function initPage() {
+      buildViewCache();
+      updateScrollEffects();
+      runEntrance();
+      setTimeout(animateCounters, 450);
+    })();
+
+    /* ---------- MOBILE MENU ---------- */
+    function toggleMobileMenu(force) {
+      const mm = document.getElementById('mobileMenu');
+      if (!mm) return;
+      if (force === false) { mm.classList.add('hidden'); return; }
+      mm.classList.toggle('hidden');
+    }
+
+    /* ---------- MODULE TABS ---------- */
+    function switchTab(tabKey) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-cyan-500', 'text-white', 'shadow-[0_0_20px_-5px_rgba(59,130,246,0.7)]');
+        btn.classList.add('bg-white/5', 'text-slate-400', 'border', 'border-white/10');
+      });
+      const c = document.getElementById('content-' + tabKey);
+      const b = document.getElementById('tab-' + tabKey);
+      if (c && b) {
+        c.classList.remove('hidden');
+        b.classList.remove('bg-white/5', 'text-slate-400', 'border', 'border-white/10');
+        b.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-cyan-500', 'text-white', 'shadow-[0_0_20px_-5px_rgba(59,130,246,0.7)]');
+      }
+    }
+
+    /* ---------- MODAL ---------- */
+    function openEstimatorModal() {
+      document.getElementById('estimatorModal').classList.remove('hidden');
+      calculateCost();
+    }
+    function closeEstimatorModal() {
+      document.getElementById('estimatorModal').classList.add('hidden');
+    }
+
+    /* ---------- COST CALCULATOR ---------- */
+    function calculateCost() {
+      let baseCost = 200000;
+      if (document.getElementById('mod-cv').checked) baseCost += 250000;
+      if (document.getElementById('mod-kasir').checked) baseCost += 500000;
+      if (document.getElementById('mod-booking').checked) baseCost += 450000;
+      if (document.getElementById('mod-invoice').checked) baseCost += 300000;
+      if (document.getElementById('mod-org').checked) baseCost += 400000;
+      const maintFee = parseInt(document.getElementById('maint-option').value) || 0;
+      const total = baseCost + maintFee;
+      document.getElementById('totalCostDisplay').innerText = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    /* ---------- WHATSAPP ---------- */
+    function sendEstimatorWA() {
+      const totalText = document.getElementById('totalCostDisplay').innerText;
+      let m = [];
+      if (document.getElementById('mod-cv').checked) m.push('CV Portofolio');
+      if (document.getElementById('mod-kasir').checked) m.push('Kasir/Stok UMKM');
+      if (document.getElementById('mod-booking').checked) m.push('Booking System');
+      if (document.getElementById('mod-invoice').checked) m.push('Invoice Generator');
+      if (document.getElementById('mod-org').checked) m.push('LPJ Organisasi');
+      const list = m.length ? m.join(', ') : 'Belum pilih modul';
+      const message = 'Halo Juraganweb, saya melakukan simulasi estimasi kontrak pembuatan website:\n\n- Modul Dipilih: ' + list + '\n- Total Estimasi Biaya Kontrak: ' + totalText + '\n\nSaya ingin konsultasi pengerjaan proyek ini.';
+      window.open('https://wa.me/6281818133968?text=' + encodeURIComponent(message), '_blank');
+    }
+  </script>
+</body>
+</html>

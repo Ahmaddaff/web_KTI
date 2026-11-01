@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Juraganweb — Software & Web Agency</title>
+  <meta name="description" content="Jasa pembuatan website & sistem aplikasi custom dengan kontrak beli putus. Sekali bayar, source code 100% milik Anda, garansi maintenance gratis." />
 
   <!-- Google Fonts: Space Grotesk (display) + Inter (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -365,12 +366,12 @@
 
   <!-- STICKY HEADER (auto-hide on scroll down) -->
   <header id="siteHeader" class="sticky top-0 z-50 will-change-transform">
-  <!-- NAVIGATION BAR (SPA) -->
+  <!-- NAVIGATION BAR -->
   <nav class="bg-ink-900/70 backdrop-blur-xl border-b border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
 
       <!-- LOGO -->
-      <a href="#view-home" onclick="navigate('home'); return false;" class="flex items-center gap-2 group">
+      <a href="index.html" class="flex items-center gap-2 group">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_22px_-2px_rgba(59,130,246,0.7)] group-hover:scale-105 transition">J</div>
         <div>
           <span class="text-xl font-extrabold tracking-tight text-white block leading-none">JURAGAN<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">WEB</span></span>
@@ -380,11 +381,11 @@
 
       <!-- DESKTOP MENU -->
       <div class="hidden lg:flex items-center space-x-8 font-medium text-slate-300 text-sm">
-        <a href="#view-modul" onclick="navigate('modul'); return false;" data-link="modul" class="nav-link hover:text-cyan-300 transition">Modul Sistem</a>
-        <a href="#view-proses" onclick="navigate('proses'); return false;" data-link="proses" class="nav-link hover:text-cyan-300 transition">Cara Kerja Kontrak</a>
-        <a href="#view-biaya" onclick="navigate('biaya'); return false;" data-link="biaya" class="nav-link hover:text-cyan-300 transition">Biaya Proyek</a>
-        <a href="#view-portfolio" onclick="navigate('portfolio'); return false;" data-link="portfolio" class="nav-link hover:text-cyan-300 transition">Portofolio</a>
-        <a href="#view-faq" onclick="navigate('faq'); return false;" data-link="faq" class="nav-link hover:text-cyan-300 transition">FAQ</a>
+        <a href="modul.html" data-link="modul" class="nav-link hover:text-cyan-300 transition">Modul Sistem</a>
+        <a href="cara-kerja.html" data-link="proses" class="nav-link hover:text-cyan-300 transition">Cara Kerja Kontrak</a>
+        <a href="biaya.html" data-link="biaya" class="nav-link hover:text-cyan-300 transition">Biaya Proyek</a>
+        <a href="portofolio.html" data-link="portfolio" class="nav-link hover:text-cyan-300 transition">Portofolio</a>
+        <a href="faq.html" data-link="faq" class="nav-link hover:text-cyan-300 transition">FAQ</a>
       </div>
 
       <!-- ACTION BUTTONS -->
@@ -406,12 +407,12 @@
     <!-- MOBILE MENU -->
     <div id="mobileMenu" class="hidden lg:hidden border-t border-white/5 bg-ink-900/95 backdrop-blur-xl">
       <div class="px-4 py-4 space-y-1 text-sm">
-        <a href="#view-home" onclick="navigate('home'); return false;" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Beranda</a>
-        <a href="#view-modul" onclick="navigate('modul'); return false;" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Modul Sistem</a>
-        <a href="#view-proses" onclick="navigate('proses'); return false;" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Cara Kerja Kontrak</a>
-        <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Biaya Proyek</a>
-        <a href="#view-portfolio" onclick="navigate('portfolio'); return false;" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Portofolio</a>
-        <a href="#view-faq" onclick="navigate('faq'); return false;" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">FAQ</a>
+        <a href="index.html" aria-current="page" class="block px-3 py-2.5 rounded-lg text-cyan-300 font-semibold bg-white/5 hover:bg-white/5 hover:text-cyan-300">Beranda</a>
+        <a href="modul.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Modul Sistem</a>
+        <a href="cara-kerja.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Cara Kerja Kontrak</a>
+        <a href="biaya.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Biaya Proyek</a>
+        <a href="portofolio.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Portofolio</a>
+        <a href="faq.html" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">FAQ</a>
         <div class="pt-2 grid grid-cols-1 gap-2">
           <button onclick="openEstimatorModal(); toggleMobileMenu(false)" class="w-full px-4 py-2.5 rounded-full border border-white/15 text-slate-200 text-sm font-semibold">Hitung Estimasi</button>
           <a href="https://wa.me/6281818133968" target="_blank" class="w-full px-4 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold text-center">Konsultasi WhatsApp</a>
@@ -421,10 +422,10 @@
   </nav>
   </header>
 
-  <!-- ================= SPA APP ================= -->
+  <!-- ================= PAGE CONTENT ================= -->
   <main id="app">
 
-    <!-- ============ VIEW: HOME ============ -->
+<!-- ============ VIEW: HOME ============ -->
     <section data-view="home" id="view-home" class="view active">
       <div class="relative pt-16 pb-24 overflow-hidden">
         <!-- HERO AURORA: blue (left) + red (right), animated -->
@@ -466,7 +467,7 @@
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-base shadow-[0_0_35px_-5px_rgba(59,130,246,0.85)] hover:shadow-[0_0_45px_-5px_rgba(34,211,238,0.85)] transition flex items-center justify-center gap-3">
+              <a href="biaya.html" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-base shadow-[0_0_35px_-5px_rgba(59,130,246,0.85)] hover:shadow-[0_0_45px_-5px_rgba(34,211,238,0.85)] transition flex items-center justify-center gap-3">
                 <span>Pilih Paket Kontrak</span>
                 <i data-lucide="arrow-right" class="w-5 h-5"></i>
               </a>
@@ -694,364 +695,28 @@
             Ini contoh tampilan dashboard — klik menu di kiri untuk mencoba tiap modul.
           </p>
 
-          <!-- QUICK ACCESS (SPA) -->
+          <!-- QUICK ACCESS -->
           <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3">
-            <button onclick="navigate('modul')" class="lift text-left p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40">
+            <a href="modul.html" class="lift text-left p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40">
               <i data-lucide="blocks" class="w-5 h-5 text-cyan-400 mb-2"></i>
               <p class="text-sm font-bold text-white">Modul Sistem</p>
               <p class="text-[11px] text-slate-500">Kasir, Booking, Invoice</p>
-            </button>
-            <button onclick="navigate('proses')" class="lift text-left p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40">
+            </a>
+            <a href="cara-kerja.html" class="lift text-left p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40">
               <i data-lucide="route" class="w-5 h-5 text-blue-400 mb-2"></i>
               <p class="text-sm font-bold text-white">Cara Kerja</p>
               <p class="text-[11px] text-slate-500">4 langkah kontrak</p>
-            </button>
-            <button onclick="navigate('biaya')" class="lift text-left p-4 rounded-xl bg-white/5 border border-white/10 hover:border-orange-500/40">
+            </a>
+            <a href="biaya.html" class="lift text-left p-4 rounded-xl bg-white/5 border border-white/10 hover:border-orange-500/40">
               <i data-lucide="wallet" class="w-5 h-5 text-orange-400 mb-2"></i>
               <p class="text-sm font-bold text-white">Biaya Proyek</p>
               <p class="text-[11px] text-slate-500">Paket transparan</p>
-            </button>
-            <button onclick="navigate('portfolio')" class="lift text-left p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40">
+            </a>
+            <a href="portofolio.html" class="lift text-left p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/40">
               <i data-lucide="star" class="w-5 h-5 text-orange-400 mb-2"></i>
               <p class="text-sm font-bold text-white">Portofolio</p>
               <p class="text-[11px] text-slate-500">Kata klien kami</p>
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ VIEW: MODUL ============ -->
-    <section data-view="modul" id="view-modul" class="view">
-      <div class="py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center max-w-2xl mx-auto mb-12">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Modul Sistem Serba Ada</h2>
-            <p class="text-2xl sm:text-3xl font-extrabold text-white">Satu Sistem, Berbagai Fitur Pilihan</p>
-            <p class="text-slate-400 text-sm mt-2">Pilih modul yang Anda butuhkan dalam satu kontrak kerja pengerjaan.</p>
-          </div>
-
-          <div class="flex flex-wrap justify-center gap-2 mb-8" id="moduleTabs">
-            <button onclick="switchTab('kasir')" id="tab-kasir" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-[0_0_20px_-5px_rgba(59,130,246,0.7)]"><i data-lucide="store" class="w-4 h-4 inline mr-1"></i> UMKM &amp; Kasir</button>
-            <button onclick="switchTab('booking')" id="tab-booking" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"><i data-lucide="calendar-check" class="w-4 h-4 inline mr-1"></i> Booking</button>
-            <button onclick="switchTab('invoice')" id="tab-invoice" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"><i data-lucide="file-check-2" class="w-4 h-4 inline mr-1"></i> Invoice</button>
-            <button onclick="switchTab('cv')" id="tab-cv" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"><i data-lucide="user-check" class="w-4 h-4 inline mr-1"></i> CV &amp; Portofolio</button>
-            <button onclick="switchTab('org')" id="tab-org" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"><i data-lucide="users" class="w-4 h-4 inline mr-1"></i> Organisasi &amp; LPJ</button>
-          </div>
-
-          <div class="bg-ink-900 border border-white/10 rounded-2xl p-6 sm:p-8 shadow-[0_0_50px_-20px_rgba(59,130,246,0.4)]">
-            <!-- KASIR -->
-            <div id="content-kasir" class="tab-content grid md:grid-cols-2 gap-6 items-center">
-              <div>
-                <span class="inline-block px-2.5 py-1 bg-blue-500/15 text-cyan-300 font-semibold text-xs rounded mb-3 border border-blue-500/20">Sistem Kasir &amp; Stok</span>
-                <h3 class="text-xl font-bold text-white mb-3">Kelola Transaksi, Stok Barang &amp; Laporan Penjualan</h3>
-                <p class="text-slate-400 text-sm leading-relaxed mb-4">Cocok untuk toko kelontong, kafe, salon, atau toko baju. Pencatatan stok real-time dan rekapitulasi keuangan otomatis.</p>
-                <ul class="space-y-2 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Rekapitulasi transaksi harian &amp; bulanan</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Peringatan otomatis stok menipis</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Cetak struk &amp; nota digital</li>
-                </ul>
-              </div>
-              <div class="bg-ink-850 p-4 rounded-xl border border-white/10 text-xs">
-                <div class="font-bold text-slate-200 border-b border-white/10 pb-2 mb-2">Simulasi Fitur Kasir</div>
-                <div class="space-y-2">
-                  <div class="flex justify-between p-2 bg-white/5 rounded"><span>Kopi Susu Aren (x2)</span><span class="font-bold text-white">Rp 36.000</span></div>
-                  <div class="flex justify-between p-2 bg-white/5 rounded"><span>Croissant Butter (x1)</span><span class="font-bold text-white">Rp 22.000</span></div>
-                  <div class="flex justify-between p-2 bg-cyan-500/10 text-cyan-300 font-bold rounded border border-cyan-500/20"><span>Total Bayar (Lunas)</span><span>Rp 58.000</span></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- BOOKING -->
-            <div id="content-booking" class="tab-content hidden grid md:grid-cols-2 gap-6 items-center">
-              <div>
-                <span class="inline-block px-2.5 py-1 bg-orange-500/15 text-orange-300 font-semibold text-xs rounded mb-3 border border-orange-500/20">Reservasi Online</span>
-                <h3 class="text-xl font-bold text-white mb-3">Booking Jadwal 24/7 Tanpa Bentrok</h3>
-                <p class="text-slate-400 text-sm leading-relaxed mb-4">Solusi reservasi otomatis untuk barbershop, lapangan futsal, klinik, hingga jadwal les private.</p>
-                <ul class="space-y-2 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Pilihan slot waktu &amp; tanggal interaktif</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Notifikasi otomatis via WhatsApp/Email</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Kunci jadwal dengan Down Payment (DP)</li>
-                </ul>
-              </div>
-              <div class="bg-ink-850 p-4 rounded-xl border border-white/10 text-xs">
-                <div class="font-bold text-slate-200 border-b border-white/10 pb-2 mb-2">Slot Jadwal Terpesan</div>
-                <div class="grid grid-cols-2 gap-2 text-center">
-                  <div class="p-2 bg-rose-500/10 border border-rose-500/20 text-rose-300 rounded font-semibold">10:00 (Terisi)</div>
-                  <div class="p-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 rounded font-semibold">11:30 (Tersedia)</div>
-                  <div class="p-2 bg-rose-500/10 border border-rose-500/20 text-rose-300 rounded font-semibold">13:00 (Terisi)</div>
-                  <div class="p-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 rounded font-semibold">15:00 (Tersedia)</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- INVOICE -->
-            <div id="content-invoice" class="tab-content hidden grid md:grid-cols-2 gap-6 items-center">
-              <div>
-                <span class="inline-block px-2.5 py-1 bg-blue-500/15 text-cyan-300 font-semibold text-xs rounded mb-3 border border-blue-500/20">Invoice Platform</span>
-                <h3 class="text-xl font-bold text-white mb-3">Buat &amp; Kirim Tagihan Profesional PDF</h3>
-                <p class="text-slate-400 text-sm leading-relaxed mb-4">Membantu freelancer dan agen layanan menerbitkan Quotation, Invoice, dan Kuitansi otomatis.</p>
-                <ul class="space-y-2 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Auto-kalkulasi PPN, diskon, dan total</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Ekspor PDF &amp; Cetak Sekali Klik</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Status tagihan (Paid / Unpaid / Overdue)</li>
-                </ul>
-              </div>
-              <div class="bg-ink-850 p-4 rounded-xl border border-white/10 text-xs">
-                <div class="border border-white/10 p-3 rounded bg-white/5 space-y-2">
-                  <div class="flex justify-between font-bold text-slate-200"><span>INVOICE #INV-0019</span><span class="text-cyan-400">PAID</span></div>
-                  <div class="text-[11px] text-slate-400">Klien: PT Karya Gemilang</div>
-                  <div class="border-t border-white/10 pt-2 flex justify-between font-bold"><span>Total Tagihan:</span><span class="text-white">Rp 4.500.000</span></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- CV -->
-            <div id="content-cv" class="tab-content hidden grid md:grid-cols-2 gap-6 items-center">
-              <div>
-                <span class="inline-block px-2.5 py-1 bg-violet-500/15 text-violet-300 font-semibold text-xs rounded mb-3 border border-violet-500/20">Personal Branding</span>
-                <h3 class="text-xl font-bold text-white mb-3">CV ATS-Friendly &amp; Website Portofolio</h3>
-                <p class="text-slate-400 text-sm leading-relaxed mb-4">Tampilkan karya terbaik Anda dengan domain nama sendiri untuk melamar kerja, beasiswa, atau kebutuhan klien.</p>
-                <ul class="space-y-2 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Tampilan responsive modern</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Tautan Linktree custom terintegrasi</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Ekspor format PDF profesional</li>
-                </ul>
-              </div>
-              <div class="bg-ink-850 p-4 rounded-xl border border-white/10 text-xs text-center space-y-2">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 mx-auto flex items-center justify-center font-bold text-white">A</div>
-                <div class="font-bold text-white text-sm">Ahmad Fauzi, S.T.</div>
-                <p class="text-[11px] text-slate-400">Fullstack Developer &amp; UI Designer</p>
-                <div class="inline-block px-3 py-1 bg-white/5 rounded text-[10px] text-cyan-300 border border-white/10">www.ahmadfauzi.id</div>
-              </div>
-            </div>
-
-            <!-- ORG -->
-            <div id="content-org" class="tab-content hidden grid md:grid-cols-2 gap-6 items-center">
-              <div>
-                <span class="inline-block px-2.5 py-1 bg-emerald-500/15 text-emerald-300 font-semibold text-xs rounded mb-3 border border-emerald-500/20">Organisasi &amp; Komunitas</span>
-                <h3 class="text-xl font-bold text-white mb-3">Project Management &amp; Laporan LPJ</h3>
-                <p class="text-slate-400 text-sm leading-relaxed mb-4">Sistem kerja transparan untuk BEM, UKM, yayasan, atau panitia. Pencatatan kas dan arsip program kerja terpusat.</p>
-                <ul class="space-y-2 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Papan tugas divisi (Kanban Board)</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Generator Laporan Pertanggungjawaban (LPJ)</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400"></i> Hak akses bertingkat (Admin &amp; Pengurus)</li>
-                </ul>
-              </div>
-              <div class="bg-ink-850 p-4 rounded-xl border border-white/10 text-xs">
-                <div class="font-bold text-slate-200 border-b border-white/10 pb-2 mb-2">Progres Projek Panitia</div>
-                <div class="space-y-2">
-                  <div>
-                    <div class="flex justify-between text-[11px] mb-1"><span>Proposal Sponsorship</span><span class="font-bold text-white">100%</span></div>
-                    <div class="w-full bg-white/5 h-1.5 rounded-full"><div class="bg-cyan-400 h-1.5 rounded-full w-full"></div></div>
-                  </div>
-                  <div>
-                    <div class="flex justify-between text-[11px] mb-1"><span>Perekrutan Peserta</span><span class="font-bold text-white">75%</span></div>
-                    <div class="w-full bg-white/5 h-1.5 rounded-full"><div class="bg-blue-500 h-1.5 rounded-full w-3/4"></div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="text-center mt-10">
-            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)]">Lihat Biaya Proyek <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ VIEW: PROSES ============ -->
-    <section data-view="proses" id="view-proses" class="view">
-      <div class="py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center max-w-2xl mx-auto mb-12">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Proses Kerja Transparan</h2>
-            <p class="text-2xl sm:text-3xl font-extrabold text-white">Bagaimana Proses Kontrak Pengerjaan Website?</p>
-            <p class="text-slate-400 text-sm mt-2">4 Langkah sederhana dari kesepakatan awal hingga website siap online.</p>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">1</div>
-              <h3 class="font-bold text-white text-base mb-2">Order &amp; Diskusi Kontrak</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">Pilih paket atau modul. Kami buatkan draf kesepakatan lingkup kerja (MoU).</p>
-            </div>
-            <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">2</div>
-              <h3 class="font-bold text-white text-base mb-2">Perencanaan &amp; Desain</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">Pilih referensi tampilan. Kami susun struktur halaman dan navigasi sistem.</p>
-            </div>
-            <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-orange-500/40">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-orange-500 to-red-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(249,115,22,0.7)]">3</div>
-              <h3 class="font-bold text-white text-base mb-2">Pengiriman Materi</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">Kirimkan logo, profil usaha, atau daftar produk. Tim kami yang input layoutnya.</p>
-            </div>
-            <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">4</div>
-              <h3 class="font-bold text-white text-base mb-2">Publish &amp; Serah Terima</h3>
-              <p class="text-xs text-slate-400 leading-relaxed">Website diluncurkan. Seluruh akses login, source code, dan panduan diserahkan.</p>
-            </div>
-          </div>
-
-          <div class="text-center mt-10">
-            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(249,115,22,0.7)]">Lihat Paket &amp; Biaya <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ VIEW: BIAYA ============ -->
-    <section data-view="biaya" id="view-biaya" class="view">
-      <div class="py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center max-w-2xl mx-auto mb-12">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Pilihan Paket Kontrak</h2>
-            <p class="text-2xl sm:text-3xl font-extrabold text-white">Biaya Proyek Transparan Tanpa Tersembunyi</p>
-            <p class="text-slate-400 text-sm mt-2">Semua paket sistem <strong class="text-slate-200">Kontrak Pengerjaan (Beli Putus)</strong> + Garansi Pemeliharaan Awal.</p>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-            <div class="lift bg-ink-900 rounded-2xl border border-white/10 p-6 flex flex-col justify-between hover:border-white/20">
-              <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Personal / Freelance</span>
-                <h3 class="text-xl font-bold text-white mb-2">Starter CV &amp; Web Profil</h3>
-                <p class="text-xs text-slate-400 mb-6">Cocok untuk CV mahasiswa, portofolio profesional, atau landing page produk tunggal.</p>
-                <div class="mb-6 pb-6 border-b border-white/10">
-                  <span class="text-xs text-slate-400 block">Biaya Kontrak Pengerjaan</span>
-                  <span class="text-3xl font-extrabold text-white whitespace-nowrap">Rp 450.000</span>
-                  <span class="text-xs text-slate-500 block mt-1">*Sekali bayar per proyek</span>
-                </div>
-                <ul class="space-y-3 text-xs text-slate-300 mb-6">
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Desain Responsive Mobile-Friendly</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Modul CV &amp; Portofolio ATS</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Gratis Domain 1 Tahun</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Garansi Maintenance 1 Bulan</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Pengerjaan 2-4 Hari Kerja</li>
-                </ul>
-              </div>
-              <a href="https://wa.me/6281818133968?text=Halo%20Juraganweb,%20saya%20tertarik%20Paket%20Starter%20CV%20%26%20Web%20Profil." target="_blank" class="w-full py-3 rounded-full bg-white/5 border border-white/15 text-white font-bold text-xs text-center hover:border-cyan-400/60 hover:text-cyan-300 transition">Pesan Paket Starter</a>
-            </div>
-
-            <div class="lift bg-gradient-to-b from-ink-800 to-ink-900 rounded-2xl border-2 border-cyan-500/50 p-6 text-white flex flex-col justify-between shadow-[0_0_50px_-15px_rgba(34,211,238,0.5)] relative">
-              <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-extrabold text-[10px] uppercase tracking-wider px-3 py-1 rounded-full shadow-md">Paling Diminati UMKM</div>
-              <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-cyan-300 block mb-1">Business &amp; Service</span>
-                <h3 class="text-xl font-bold text-white mb-2">UMKM &amp; Booking System</h3>
-                <p class="text-xs text-slate-300 mb-6">Cocok untuk toko, salon, barbershop, studio, atau usaha jasa yang butuh reservasi &amp; stok.</p>
-                <div class="mb-6 pb-6 border-b border-white/10">
-                  <span class="text-xs text-slate-300 block">Biaya Kontrak Pengerjaan</span>
-                  <span class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-400 whitespace-nowrap">Rp 1.250.000</span>
-                  <span class="text-xs text-slate-400 block mt-1">*Sekali bayar per proyek</span>
-                </div>
-                <ul class="space-y-3 text-xs text-slate-200 mb-6">
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-orange-400 shrink-0"></i> <strong>Pilih 2 Modul Utama</strong> (Kasir/Booking/Invoice)</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-orange-400 shrink-0"></i> Integrasi Notifikasi WhatsApp</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-orange-400 shrink-0"></i> Gratis Domain .COM / .ID 1 Tahun</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-orange-400 shrink-0"></i> Garansi Maintenance 3 Bulan</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-orange-400 shrink-0"></i> Panduan Penggunaan &amp; Video</li>
-                </ul>
-              </div>
-              <a href="https://wa.me/6281818133968?text=Halo%20Juraganweb,%20saya%20tertarik%20Paket%20UMKM%20%26%20Booking%20System." target="_blank" class="w-full py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-bold text-xs text-center transition shadow-[0_0_25px_-5px_rgba(249,115,22,0.8)]">Pesan Paket Business</a>
-            </div>
-
-            <div class="lift bg-ink-900 rounded-2xl border border-white/10 p-6 flex flex-col justify-between hover:border-white/20">
-              <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Full Ecosystem</span>
-                <h3 class="text-xl font-bold text-white mb-2">All-In-One Enterprise</h3>
-                <p class="text-xs text-slate-400 mb-6">Untuk organisasi besar, BEM, yayasan, atau bisnis dengan alur operasional kompleks.</p>
-                <div class="mb-6 pb-6 border-b border-white/10">
-                  <span class="text-xs text-slate-400 block">Biaya Kontrak Pengerjaan</span>
-                  <span class="text-3xl font-extrabold text-white whitespace-nowrap">Rp 2.800.000</span>
-                  <span class="text-xs text-slate-500 block mt-1">*Sekali bayar per proyek</span>
-                </div>
-                <ul class="space-y-3 text-xs text-slate-300 mb-6">
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> <strong>Akses Semua Modul</strong></li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Multi-User Akses Hak Admin</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Gratis Server Storage 1 Tahun</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Garansi Maintenance 6 Bulan</li>
-                  <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i> Dokumen Kontrak Resmi</li>
-                </ul>
-              </div>
-              <a href="https://wa.me/6281818133968?text=Halo%20Juraganweb,%20saya%20tertarik%20Paket%20All-In-One%20Enterprise." target="_blank" class="w-full py-3 rounded-full bg-white/5 border border-white/15 text-white font-bold text-xs text-center hover:border-cyan-400/60 hover:text-cyan-300 transition">Pesan Paket Enterprise</a>
-            </div>
-          </div>
-
-          <!-- ADD-ON -->
-          <div class="mt-10">
-            <div class="bg-ink-850 rounded-xl p-6 sm:p-8 border border-white/10 shadow-[0_0_40px_-20px_rgba(59,130,246,0.4)] flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/15 text-cyan-300 text-xs font-bold rounded mb-2 border border-blue-500/20"><i data-lucide="wrench" class="w-3.5 h-3.5"></i> Kontrak Tambahan Opsional</div>
-                <h3 class="text-lg font-bold text-white">Butuh Pemeliharaan Setelah Garansi Habis?</h3>
-                <p class="text-slate-400 text-xs mt-1 max-w-xl">Bisa menandatangani <strong class="text-slate-200">Kontrak Maintenance Terpisah</strong> kapan saja untuk update konten, backup rutin, dan pembaruan fitur tanpa biaya bulanan paksaan.</p>
-              </div>
-              <a href="https://wa.me/6281818133968?text=Halo,%20saya%20ingin%20tanya%20layanan%20kontrak%20maintenance." target="_blank" class="px-5 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold shrink-0 transition shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)]">Tanyakan Maintenance</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ VIEW: PORTFOLIO ============ -->
-    <section data-view="portfolio" id="view-portfolio" class="view">
-      <div class="py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center max-w-2xl mx-auto mb-12">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Kepercayaan Mitra</h2>
-            <p class="text-2xl sm:text-3xl font-extrabold text-white">Apa Kata Klien Kami?</p>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lift bg-ink-900 p-6 rounded-xl border border-white/10 text-xs hover:border-cyan-500/30">
-              <div class="flex text-orange-400 mb-3"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div>
-              <p class="text-slate-300 italic mb-4">"Sangat puas dengan sistem kontrak beli putus Juraganweb. Setelah selesai, saya tidak ditagih bulanan lagi. Hasilnya rapi!"</p>
-              <p class="font-bold text-white">Leonardo C.</p><p class="text-slate-500 text-[10px]">Pemilik Usaha Furniture</p>
-            </div>
-            <div class="lift bg-ink-900 p-6 rounded-xl border border-white/10 text-xs hover:border-cyan-500/30">
-              <div class="flex text-orange-400 mb-3"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div>
-              <p class="text-slate-300 italic mb-4">"Modul booking untuk jadwal studio kami berjalan lancar. Tidak ada lagi double booking dan pengerjaannya cepat sesuai kontrak."</p>
-              <p class="font-bold text-white">Gufi Laura P.</p><p class="text-slate-500 text-[10px]">Pengelola Studio Foto</p>
-            </div>
-            <div class="lift bg-ink-900 p-6 rounded-xl border border-white/10 text-xs hover:border-cyan-500/30">
-              <div class="flex text-orange-400 mb-3"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div>
-              <p class="text-slate-300 italic mb-4">"Membantu banget buat BEM kami. Pembuatan LPJ dan rekap anggaran organisasi jadi terstruktur. Komunikasi responsif."</p>
-              <p class="font-bold text-white">Ronald A.</p><p class="text-slate-500 text-[10px]">Ketua Organisasi Mahasiswa</p>
-            </div>
-          </div>
-
-          <div class="text-center mt-10">
-            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)] transition">Lihat Biaya Proyek <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ VIEW: FAQ ============ -->
-    <section data-view="faq" id="view-faq" class="view">
-      <div class="py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-12">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Pertanyaan Umum</h2>
-            <p class="text-2xl sm:text-3xl font-extrabold text-white">Frequently Asked Questions</p>
-          </div>
-
-          <div class="space-y-4 text-xs sm:text-sm">
-            <div class="bg-ink-850 p-5 rounded-xl border border-white/10">
-              <h3 class="font-bold text-white text-base mb-2">Apakah ini benar-benar bukan sistem langganan?</h3>
-              <p class="text-slate-400 leading-relaxed">Ya, kami menggunakan sistem <strong class="text-slate-200">Kontrak Proyek (Beli Putus)</strong>. Anda hanya membayar biaya pengerjaan sesuai MoU. Website dan source code 100% milik Anda.</p>
-            </div>
-            <div class="bg-ink-850 p-5 rounded-xl border border-white/10">
-              <h3 class="font-bold text-white text-base mb-2">Bagaimana jika saya butuh update konten di kemudian hari?</h3>
-              <p class="text-slate-400 leading-relaxed">Setiap pengerjaan menyertakan Garansi Maintenance Gratis (1–6 bulan sesuai paket). Setelah garansi habis, Anda bebas mengedit sendiri atau menandatangani <strong class="text-slate-200">Kontrak Maintenance Terpisah</strong>.</p>
-            </div>
-            <div class="bg-ink-850 p-5 rounded-xl border border-white/10">
-              <h3 class="font-bold text-white text-base mb-2">Apakah saya bisa memilih modul tertentu saja?</h3>
-              <p class="text-slate-400 leading-relaxed">Bisa. Anda bisa memilih modul yang dibutuhkan saja (misal hanya Kasir + Booking) agar biaya kontrak lebih efisien.</p>
-            </div>
-          </div>
-
-          <div class="text-center mt-10">
-            <button onclick="openEstimatorModal()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)]"><i data-lucide="calculator" class="w-4 h-4"></i> Hitung Estimasi Kontrak</button>
+            </a>
           </div>
         </div>
       </div>
@@ -1101,7 +766,7 @@
       </div>
       <div class="flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-500">
         <p>© 2018-2026 Juraganweb - Jasa Pembuatan Website &amp; System Properti.</p>
-        <p class="mt-2 sm:mt-0">SPA • Model Kontrak Kerja Proyek Beli Putus</p>
+        <p class="mt-2 sm:mt-0">Model Kontrak Kerja Proyek Beli Putus</p>
       </div>
     </div>
   </footer>
@@ -1176,9 +841,6 @@
       }
 
       function onScroll() {
-        if (window.__navScrolling || Date.now() < (window.__headerSuppressUntil || 0)) {
-          lastY = window.scrollY || 0; ticking = false; return;
-        }
         const y = window.scrollY || window.pageYOffset || 0;
         const d = y - lastY;
         lastY = y;
@@ -1200,10 +862,6 @@
         if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
       }, { passive: true });
     })();
-
-    /* ---------- ONE-PAGE SCROLL NAVIGATION ---------- */
-    const SECTION_NAMES = ['home', 'modul', 'proses', 'biaya', 'portfolio', 'faq'];
-    const SECTION_OFFSET = 84; // sticky header height + breathing room
 
     /* ---------- FLOATING BACKGROUND MOTES ---------- */
     (function initMotes() {
@@ -1410,82 +1068,31 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    function setActiveNav(name) {
-      lastActiveNav = name;
-      document.querySelectorAll('[data-link]').forEach(l => {
-        l.classList.toggle('nav-active', l.dataset.link === name);
-      });
-    }
-
-    function navigate(name) {
-      if (!SECTION_NAMES.includes(name)) name = 'home';
-      const target = name === 'home' ? null : document.getElementById('view-' + name);
-      const goal = target
-        ? Math.max(0, target.getBoundingClientRect().top + window.scrollY - SECTION_OFFSET)
-        : 0;
-
-      // Keep the header visible for the whole programmatic scroll. Released by
-      // watching for the scroll position to REACH the goal (not by timing, which
-      // misfires on slow machines), with a hard cap as a safety net.
-      window.__navScrolling = true;
-      window.__headerSuppressUntil = Date.now() + 12000;
-      (function releaseAtGoal() {
-        const t0 = Date.now();
-        const tick = () => {
-          if (Math.abs(window.scrollY - goal) <= 3 || Date.now() - t0 > 8000) {
-            window.__navScrolling = false;
-            window.__headerSuppressUntil = Date.now() + 700;
-            return;
-          }
-          requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      })();
-
-      const hd = document.getElementById('siteHeader');
-      if (hd) hd.classList.remove('header-hidden');
-      window.scrollTo({ top: goal, behavior: 'smooth' });
-
-      const mm = document.getElementById('mobileMenu');
-      if (mm) mm.classList.add('hidden');
-      setActiveNav(name);
-      if (name === 'home') setTimeout(animateCounters, 500);
-    }
-
-    /* ---------- SCROLL-LINKED SECTION ANIMATION ----------
-       One pass per frame: read every rect first, then write every style.
-       Mixing reads and writes forces a synchronous reflow each time, which is
-       what made the boxes feel steppy. Values are written straight onto the
-       element (not via CSS custom properties) so there is no var() re-resolve. */
+    /* ---------- PAGE ENTRANCE + SCROLL ANIMATION ----------
+       Every page now holds exactly one section, so the "widen while rising"
+       move plays as the page enters instead of as the section scrolls into
+       view. The exit fade stays scroll-linked, with the same formula as before.
+       One pass per frame: read every rect first, then write every style —
+       mixing reads and writes forces a synchronous reflow each time. */
     const viewCache = [];
-    let navLinks = [];
-    let lastActiveNav = null;
+    let enterP = 0;
 
     function buildViewCache() {
       viewCache.length = 0;
       document.querySelectorAll('.view').forEach((el) => {
-        viewCache.push({
-          el,
-          inner: el.firstElementChild,
-          isHero: el.id === 'view-home',
-          id: el.id.replace('view-', ''),
-        });
+        viewCache.push({ el, inner: el.firstElementChild });
       });
-      navLinks = Array.from(document.querySelectorAll('[data-link]'));
     }
 
     function updateScrollEffects() {
       const vh = window.innerHeight;
       const y = window.scrollY;
-      const start = vh * 0.95;
-      const end = vh * 0.1;
-      const span = start - end || 1;
 
       /* ---- READ PHASE (single layout flush) ---- */
       const geo = [];
       for (let i = 0; i < viewCache.length; i++) {
         const r = viewCache[i].el.getBoundingClientRect();
-        geo.push({ top: r.top, bottom: r.bottom, height: r.height });
+        geo.push({ bottom: r.bottom, height: r.height });
       }
       const docH = document.documentElement.scrollHeight;
 
@@ -1495,12 +1102,10 @@
         const g = geo[i];
         const h = g.height > 1 ? g.height : 1;
 
-        let pEnter = v.isHero ? 1 : (start - g.top) / span;
-        pEnter = pEnter < 0 ? 0 : pEnter > 1 ? 1 : pEnter;
-
         let pExit = (g.bottom - h * 0.3) / (h * 0.3);
         pExit = pExit < 0 ? 0 : pExit > 1 ? 1 : pExit;
 
+        const pEnter = enterP;
         const p = pEnter < pExit ? pEnter : pExit;
         const exp = 0.83 + 0.17 * p;
         const ty = (1 - pEnter) * 110;
@@ -1511,26 +1116,12 @@
         const opB = 0.8 + 0.2 * b;
         const op = opA < opB ? opA : opB;
 
-        const inner = v.inner;
-        if (inner) {
-          inner.style.transform =
+        if (v.inner) {
+          v.inner.style.transform =
             'translate3d(0,' + ty.toFixed(1) + 'px,0) scaleX(' + exp.toFixed(4) + ')';
-          inner.style.opacity = op.toFixed(3);
+          v.inner.style.opacity = op.toFixed(3);
         }
         v.el.style.setProperty('--rule', (pEnter * 1.8 > 1 ? 1 : pEnter * 1.8).toFixed(3));
-      }
-
-      /* nav highlight — only touch the DOM when it actually changes */
-      const probe = SECTION_OFFSET + 48;
-      let current = 'home';
-      for (let i = 0; i < geo.length; i++) {
-        if (geo[i].top <= probe) current = viewCache[i].id;
-      }
-      if (current !== lastActiveNav) {
-        lastActiveNav = current;
-        for (let i = 0; i < navLinks.length; i++) {
-          navLinks[i].classList.toggle('nav-active', navLinks[i].dataset.link === current);
-        }
       }
 
       const bar = document.getElementById('routeBar');
@@ -1540,29 +1131,41 @@
       }
     }
 
-    let spyTicking = false;
-    function onScrollFrame() {
-      spyTicking = false;
-      updateScrollEffects();
+    /* entrance: 0 -> 1 over ~780ms, ease-out, so the box widens as it settles */
+    function runEntrance() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        enterP = 1;
+        updateScrollEffects();
+        return;
+      }
+      const DUR = 780;
+      const t0 = performance.now();
+      (function step(now) {
+        const t = Math.min((now - t0) / DUR, 1);
+        enterP = 1 - Math.pow(1 - t, 3);
+        updateScrollEffects();
+        if (t < 1) requestAnimationFrame(step);
+      })(t0);
     }
+
+    let spyTicking = false;
     window.addEventListener('scroll', () => {
-      if (!spyTicking) { spyTicking = true; requestAnimationFrame(onScrollFrame); }
+      if (!spyTicking) {
+        spyTicking = true;
+        requestAnimationFrame(() => { spyTicking = false; updateScrollEffects(); });
+      }
     }, { passive: true });
+
     window.addEventListener('resize', () => {
       buildViewCache();
       updateScrollEffects();
     }, { passive: true });
 
-    // init: deep-link (#view-...) + first paint
     (function initPage() {
       buildViewCache();
       updateScrollEffects();
-      const h = (location.hash || '').replace('#', '');
-      if (h && h !== 'home' && document.getElementById('view-' + h)) {
-        setTimeout(() => navigate(h), 150);
-      } else {
-        setTimeout(animateCounters, 450);
-      }
+      runEntrance();
+      setTimeout(animateCounters, 450);
     })();
 
     /* ---------- MOBILE MENU ---------- */
