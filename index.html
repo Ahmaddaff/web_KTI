@@ -5,23 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Juraganweb — Software & Web Agency</title>
 
-  <!-- Google Fonts: Space Grotesk (display) + Inter (body) -->
+  <!-- Apple system font stack; Inter kept as a web fallback -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
+    /* Apple-inspired palette. Remapping the built-in colour ramps re-themes
+       every existing utility class without touching a single DOM node.
+       Green is a restrained accent, never a surface fill. */
+    /* DEEP GREEN ramp - the requested #043927 is the 600 stop (hue 160).
+       Light 50-200 are surface tints; 300-950 grow progressively darker. */
+    const LIME = {
+      50:'#EFF8F3', 100:'#DCEFE5', 200:'#A8D5BF', 300:'#3E9E72',
+      400:'#0F7A55', 500:'#0A6B4A', 600:'#043927', 700:'#032E1F',
+      800:'#022618', 900:'#021C12', 950:'#011309'
+    };
+    const NEUTRAL = {
+      50:'#FFFFFF', 100:'#F5F5F7', 200:'#E8E8ED', 300:'#D2D2D7',
+      400:'#A1A1A6', 500:'#86868B', 600:'#6E6E73', 700:'#515154',
+      800:'#333336', 900:'#1D1D1F', 950:'#0A0A0B'
+    };
+    /* guard: a CDN hiccup must not throw a page error */
+    if (typeof tailwind !== 'undefined') tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            display: ['"Space Grotesk"', 'Inter', 'sans-serif']
+            sans: ['-apple-system','BlinkMacSystemFont','"SF Pro Text"','Inter','"Helvetica Neue"','Arial','sans-serif'],
+            display: ['-apple-system','BlinkMacSystemFont','"SF Pro Display"','Inter','"Helvetica Neue"','Arial','sans-serif']
           },
           colors: {
-            ink: { 950:'#06070B', 900:'#0A0B11', 850:'#0E1017', 800:'#14161F', 700:'#1C2030', 600:'#262B3D' }
+            /* light surfaces so every bg-ink-* card reads as Apple grey */
+            ink: { 950:'#FFFFFF', 900:'#F5F5F7', 850:'#FAFAFC', 800:'#F5F5F7', 700:'#E8E8ED', 600:'#D2D2D7' },
+            blue: LIME, cyan: LIME, sky: LIME, teal: LIME, emerald: LIME, green: LIME,
+            indigo: LIME, violet: LIME, purple: LIME, fuchsia: LIME, pink: LIME,
+            orange: LIME, amber: LIME, yellow: LIME, red: LIME, rose: LIME,
+            slate: NEUTRAL, gray: NEUTRAL, zinc: NEUTRAL, neutral: NEUTRAL, stone: NEUTRAL
           }
         }
       }
@@ -36,21 +57,21 @@
 
     /* ===== TYPOGRAPHY & TEXT COLORS ===== */
     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    body.text-slate-200 { color: #C9D3E6; }
+    body.text-slate-200 { color: #6E6E73; }
     h1, h2, h3, h4, h5,
     body .font-extrabold,
     body .font-display {
       font-family: 'Space Grotesk', 'Inter', sans-serif;
       letter-spacing: -0.015em;
     }
-    body .text-white  { color: #F7F9FF; }
-    body .text-slate-200 { color: #E7ECF8; }
-    body .text-slate-300 { color: #C9D3E6; }
-    body .text-slate-400 { color: #9CA7C1; }
-    body .text-slate-500 { color: #7B87A1; }
-    body .text-slate-600 { color: #5E6A83; }
-    body .text-cyan-300 { color: #67E8F9; }
-    body .text-orange-300 { color: #FDBA74; }
+    body .text-white  { color: #1D1D1F; }
+    body .text-slate-200 { color: #1D1D1F; }
+    body .text-slate-300 { color: #6E6E73; }
+    body .text-slate-400 { color: #6E6E73; }
+    body .text-slate-500 { color: #6E6E73; }
+    body .text-slate-600 { color: #6E6E73; }
+    body .text-cyan-300 { color: #043927; }
+    body .text-orange-300 { color: #043927; }
 
     /* ===== AUTO-HIDE HEADER (smooth) ===== */
     #siteHeader {
@@ -59,10 +80,10 @@
     }
     #siteHeader.header-hidden { transform: translateY(-100%); }
     ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: #06070B; }
-    ::-webkit-scrollbar-thumb { background: #1C2030; border-radius: 8px; }
-    ::-webkit-scrollbar-thumb:hover { background: #262B3D; }
-    .glow-text { text-shadow: 0 0 26px rgba(34,211,238,0.35); }
+    ::-webkit-scrollbar-track { background: #F5F5F7; }
+    ::-webkit-scrollbar-thumb { background: #D2D2D7; border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D2D2D7; }
+    .glow-text { text-shadow: 0 0 26px rgba(20,164,115,0.35); }
 
     /* ============ AURORA BACKGROUND (animated blue + red) ============ */
     .aurora-blob {
@@ -71,17 +92,17 @@
     }
     .blob-blue {
       width: 680px; height: 680px; left: -14%; top: -12%;
-      background: radial-gradient(circle at 45% 45%, rgba(59,130,246,0.55), rgba(37,99,235,0.18) 55%, transparent 72%);
+      background: radial-gradient(circle at 45% 45%, rgba(20,164,115,0.55), rgba(20,164,115,0.18) 55%, transparent 72%);
       animation: driftBlue 18s ease-in-out infinite;
     }
     .blob-red {
       width: 640px; height: 640px; right: -14%; top: -10%;
-      background: radial-gradient(circle at 55% 45%, rgba(249,115,22,0.50), rgba(239,68,68,0.20) 55%, transparent 72%);
+      background: radial-gradient(circle at 55% 45%, rgba(20,164,115,0.50), rgba(20,164,115,0.20) 55%, transparent 72%);
       animation: driftRed 21s ease-in-out infinite;
     }
     .blob-cyan {
       width: 420px; height: 420px; left: 38%; top: 46%;
-      background: radial-gradient(circle at 50% 50%, rgba(34,211,238,0.20), transparent 70%);
+      background: radial-gradient(circle at 50% 50%, rgba(20,164,115,0.20), transparent 70%);
       animation: driftCyan 15s ease-in-out infinite;
     }
     @keyframes driftBlue {
@@ -116,13 +137,13 @@
     /* ---- rotating conic colour wash (the slow "breathing" of the page) ---- */
     #bgConic {
       background: conic-gradient(from 0deg,
-        rgba(37,99,235,0.62) 0deg,
-        rgba(34,211,238,0.40) 58deg,
-        rgba(59,130,246,0.12) 118deg,
-        rgba(249,115,22,0.44) 204deg,
-        rgba(239,68,68,0.30) 258deg,
-        rgba(99,102,241,0.44) 316deg,
-        rgba(37,99,235,0.62) 360deg);
+        rgba(20,164,115,0.62) 0deg,
+        rgba(20,164,115,0.40) 58deg,
+        rgba(20,164,115,0.12) 118deg,
+        rgba(20,164,115,0.44) 204deg,
+        rgba(20,164,115,0.30) 258deg,
+        rgba(20,164,115,0.44) 316deg,
+        rgba(20,164,115,0.62) 360deg);
       /* no blur(): a conic gradient already interpolates smoothly, and a
          blurred 130vmax surface was heavy enough to starve smooth scrolling */
       opacity: .27;
@@ -170,9 +191,9 @@
       position: absolute; inset: -20%;
       background: linear-gradient(103deg,
         transparent 38%,
-        rgba(125,211,252,0.16) 47%,
-        rgba(186,230,253,0.22) 50%,
-        rgba(253,186,116,0.14) 54%,
+        rgba(20,164,115,0.16) 47%,
+        rgba(200,235,215,0.22) 50%,
+        rgba(20,164,115,0.14) 54%,
         transparent 64%);
       will-change: transform, opacity;
       animation: sweep 16s cubic-bezier(.45,0,.55,1) infinite;
@@ -237,12 +258,12 @@
       transform: translateX(-50%) scaleX(0);
       transform-origin: center;
       background: linear-gradient(90deg,
-        rgba(59,130,246,0) 0%,
-        rgba(59,130,246,.85) 16%,
-        rgba(34,211,238,1) 50%,
-        rgba(59,130,246,.85) 84%,
-        rgba(59,130,246,0) 100%);
-      box-shadow: 0 0 22px rgba(34,211,238,.7), 0 0 60px rgba(59,130,246,.45);
+        rgba(20,164,115,0) 0%,
+        rgba(20,164,115,.85) 16%,
+        rgba(20,164,115,1) 50%,
+        rgba(20,164,115,.85) 84%,
+        rgba(20,164,115,0) 100%);
+      box-shadow: 0 0 22px rgba(20,164,115,.7), 0 0 60px rgba(20,164,115,.45);
       border-radius: 3px;
       pointer-events: none;
       transition: transform .8s cubic-bezier(.25,.46,.45,.94) .08s;
@@ -258,15 +279,15 @@
     .nav-link.nav-active { color: #fff; }
     .nav-link.nav-active::after {
       content: ''; position: absolute; left: 0; right: 0; bottom: -7px; height: 2px; border-radius: 2px;
-      background: linear-gradient(90deg, #3b82f6, #22d3ee);
-      box-shadow: 0 0 12px rgba(34,211,238,.85);
+      background: linear-gradient(90deg, #043927, #043927);
+      box-shadow: 0 0 12px rgba(20,164,115,.85);
     }
 
     /* route progress bar */
     #routeBar {
       position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-      background: linear-gradient(90deg, #3b82f6, #22d3ee, #f97316);
-      box-shadow: 0 0 10px rgba(34,211,238,.9);
+      background: linear-gradient(90deg, #043927, #043927, #043927);
+      box-shadow: 0 0 10px rgba(20,164,115,.9);
       z-index: 80; transition: opacity .3s ease; opacity: 1;
     }
 
@@ -279,13 +300,13 @@
       position: absolute; left: 0; top: 0; width: 620px; height: 620px; border-radius: 9999px;
       transform: translate3d(-50%,-50%,0); pointer-events: none; opacity: 0;
       background:
-        radial-gradient(circle at 62% 62%, rgba(249,115,22,0.16), transparent 46%),
-        radial-gradient(circle, rgba(59,130,246,0.34), rgba(34,211,238,0.14) 42%, transparent 70%);
+        radial-gradient(circle at 62% 62%, rgba(20,164,115,0.16), transparent 46%),
+        radial-gradient(circle, rgba(20,164,115,0.34), rgba(20,164,115,0.14) 42%, transparent 70%);
       mix-blend-mode: screen; transition: opacity .45s ease; will-change: transform;
     }
     #cursorRing {
       position: fixed; left: 0; top: 0; width: 18px; height: 18px; border-radius: 9999px;
-      border: 1.5px solid rgba(34,211,238,0.85); box-shadow: 0 0 14px rgba(34,211,238,0.75);
+      border: 1.5px solid rgba(20,164,115,0.85); box-shadow: 0 0 14px rgba(20,164,115,0.75);
       transform: translate3d(-50%,-50%,0); pointer-events: none; opacity: 0; z-index: 70;
       transition: opacity .3s ease, width .2s ease, height .2s ease, border-color .2s ease; will-change: transform;
     }
@@ -294,17 +315,17 @@
     /* ============ DASHBOARD ANIMATIONS ============ */
     .dash-scan {
       position: absolute; inset: 0; pointer-events: none;
-      background: linear-gradient(110deg, transparent 32%, rgba(34,211,238,0.10) 50%, transparent 68%);
+      background: linear-gradient(110deg, transparent 32%, rgba(20,164,115,0.10) 50%, transparent 68%);
       background-size: 240% 100%;
       animation: dashScan 6.5s linear infinite;
     }
     @keyframes dashScan { 0% { background-position: 220% 0; } 100% { background-position: -120% 0; } }
 
     .dash-card { position: relative; overflow: hidden; transition: border-color .3s ease, transform .3s ease; }
-    .dash-card:hover { border-color: rgba(34,211,238,0.35); transform: translateY(-2px); }
+    .dash-card:hover { border-color: rgba(20,164,115,0.35); transform: translateY(-2px); }
     .dash-card::before {
       content: ''; position: absolute; left: 0; top: 0; height: 2px; width: 100%;
-      background: linear-gradient(90deg, transparent, rgba(34,211,238,0.7), transparent);
+      background: linear-gradient(90deg, transparent, rgba(20,164,115,0.7), transparent);
       transform: translateX(-100%); animation: cardSweep 4.5s ease-in-out infinite;
     }
     @keyframes cardSweep { 0%,55% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
@@ -317,13 +338,13 @@
     .view.active .dash-row { animation: rowIn .5s ease forwards; }
     @keyframes rowIn { to { opacity: 1; transform: translateX(0); } }
 
-    .live-dot { position: relative; display: inline-flex; width: 7px; height: 7px; border-radius: 9999px; background: #22d3ee; }
-    .live-dot::after { content: ''; position: absolute; inset: -3px; border-radius: 9999px; border: 1px solid rgba(34,211,238,.8); animation: livePing 1.6s ease-out infinite; }
+    .live-dot { position: relative; display: inline-flex; width: 7px; height: 7px; border-radius: 9999px; background: #043927; }
+    .live-dot::after { content: ''; position: absolute; inset: -3px; border-radius: 9999px; border: 1px solid rgba(20,164,115,.8); animation: livePing 1.6s ease-out infinite; }
     @keyframes livePing { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.4); opacity: 0; } }
 
     .sidebar-active::after {
       content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 3px; border-radius: 3px;
-      background: linear-gradient(#22d3ee, #3b82f6); box-shadow: 0 0 12px rgba(34,211,238,.9);
+      background: linear-gradient(#043927, #043927); box-shadow: 0 0 12px rgba(20,164,115,.9);
       animation: barPulse 2s ease-in-out infinite;
     }
     @keyframes barPulse { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
@@ -343,6 +364,818 @@
       .dash-row { opacity: 1; transform: none; }
     }
   </style>
+  <style id="appleTheme">
+    /* ================================================================
+       APPLE.COM-INSPIRED UI  |  STRUCTURE RETAINED
+       Pure repaint. !important is required because Tailwind Play CDN
+       injects its stylesheet at runtime, so cascade order is unreliable.
+       Green is #043927 (deep forest, hue 160): CTA, active state, hairline.
+       CTA labels are WHITE -- dark ink on #043927 would only be 1.47:1.
+       ================================================================ */
+    :root {
+      /* LIGHT-ONLY CANVAS. The system dark-mode override was intentionally
+         removed: the brief asks for a white background, black type and a
+         deep forest green #043927. `color-scheme:light` stops UA dark widgets. */
+      color-scheme: light;
+      --ap-bg:#FFFFFF; --ap-surface:#F5F5F7; --ap-surface-2:#FAFAFC;
+      --ap-ink:#101013; --ap-muted:#5C5C63; --ap-line:rgba(16,16,19,.10);
+      --ap-accent:#043927; --ap-accent-ink:#043927;
+      --ap-accent-2:#0E7A52; --ap-accent-soft:#DCEFE5;
+      --ap-cta:#043927; --ap-cta-text:#FFFFFF;
+      --ap-grid:rgba(16,16,19,.055);
+      --ap-shadow:0 1px 2px rgba(16,16,19,.035), 0 14px 38px -26px rgba(16,16,19,.28);
+      --ap-glass:rgba(255,255,255,.78);
+    }
+
+    /* ---- canvas + typography ---- */
+    /* White canvas with a quiet engineering grid: 48px minor lines, 192px
+       major lines and one very soft green wash near the top. It lives on
+       <body> so opaque cards/footer stay clean and the grid only shows in
+       the generous gutters. Fixed attachment keeps it stable while scrolling. */
+    html { background-color:var(--ap-bg) !important; }
+    body {
+      background-color:transparent !important;
+      background-image:
+        linear-gradient(rgba(16,16,19,.075) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16,16,19,.075) 1px, transparent 1px),
+        linear-gradient(var(--ap-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--ap-grid) 1px, transparent 1px),
+        radial-gradient(ellipse 90% 60% at 50% -10%, rgba(20,164,115,.06), transparent 70%) !important;
+      background-size:192px 192px, 192px 192px, 48px 48px, 48px 48px, 100% 100% !important;
+      background-position:center top !important;
+      background-attachment:fixed !important;
+      color:var(--ap-ink) !important;
+      -webkit-font-smoothing:antialiased;
+    }
+    body, body .font-display, body h1, body h2, body h3, body h4, body h5,
+    body button, body input, body select, body textarea {
+      font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                  "Inter", "Helvetica Neue", Arial, sans-serif !important;
+      letter-spacing:-0.015em !important;
+    }
+    ::selection { background:rgba(20,164,115,.18) !important; color:var(--ap-ink) !important; }
+    ::-webkit-scrollbar-track { background:var(--ap-bg) !important; }
+    ::-webkit-scrollbar-thumb { background:rgba(110,110,115,.35) !important; border-radius:999px; }
+
+    /* Apple keeps the canvas quiet: retire the neon particle/aurora stack */
+    #bgLayers, .aurora-streaks, .aurora-blob, #cursorGlow { display:none !important; }
+    .glow-text { text-shadow:none !important; }
+    .rz-micro { display:none !important; }
+    #cursorRing { border-color:rgba(20,164,115,.45) !important; box-shadow:none !important; opacity:.28 !important; }
+
+    /* ---- text colour hierarchy ---- */
+    .text-white, .text-slate-100, .text-slate-200, .text-slate-300,
+    .text-slate-700, .text-slate-800, .text-slate-900 { color:var(--ap-ink) !important; }
+    .text-slate-400, .text-slate-500, .text-slate-600 { color:var(--ap-muted) !important; }
+    .text-cyan-200, .text-cyan-300, .text-cyan-400, .text-cyan-500,
+    .text-blue-400, .text-orange-300, .text-orange-400,
+    .text-emerald-400, .text-green-400, .text-rose-300 { color:var(--ap-accent-ink) !important; }
+
+    main h1, main h2, main h3, main h4, main h5, footer h4,
+    main p.text-2xl.font-extrabold:not(.bg-clip-text),
+    main span.text-3xl.font-extrabold:not(.bg-clip-text) {
+      color:var(--ap-ink) !important;
+      text-shadow:none !important;
+      font-weight:600 !important;
+      letter-spacing:-0.035em !important;
+    }
+    /* gradient-clipped words become a single readable sage accent */
+    .bg-clip-text {
+      color:var(--ap-accent-ink) !important;
+      -webkit-text-fill-color:var(--ap-accent-ink) !important;
+      background-image:none !important;
+      text-shadow:none !important;
+    }
+
+    /* ---- full-bleed hero, big restrained type ---- */
+    main #view-home h1 {
+      font-size:clamp(2.5rem, 5.2vw, 4.75rem) !important;
+      line-height:1.08 !important;
+      letter-spacing:-0.045em !important;
+      font-weight:700 !important;
+      color:#0B0B0D !important;
+      text-shadow:none !important;
+      text-wrap:balance;           /* no orphan words like "Aplikasi" */
+    }
+    main #view-home h1 span.bg-clip-text { display:block; margin-top:.10em; }
+    main #view-home h1 + p {
+      font-size:clamp(1.05rem, 1.5vw, 1.3rem) !important;
+      line-height:1.6 !important;
+      color:var(--ap-muted) !important;
+    }
+    main p.text-2xl.font-extrabold {
+      font-size:clamp(2rem, 4vw, 3.1rem) !important;
+      line-height:1.1 !important;
+    }
+    /* generous whitespace between large horizontal blocks */
+    main .view > div:first-child {
+      padding-top:clamp(5rem, 9vw, 8rem) !important;
+      padding-bottom:clamp(5rem, 9vw, 8rem) !important;
+    }
+
+    /* ---- glass navbar ---- */
+    #siteHeader nav {
+      background:var(--ap-glass) !important;
+      backdrop-filter:blur(20px) saturate(180%) !important;
+      -webkit-backdrop-filter:blur(20px) saturate(180%) !important;
+      border-bottom:1px solid var(--ap-line) !important;
+      box-shadow:none !important;
+    }
+    #mobileMenu {
+      background:var(--ap-glass) !important;
+      backdrop-filter:blur(20px) saturate(180%) !important;
+      -webkit-backdrop-filter:blur(20px) saturate(180%) !important;
+      border-top-color:var(--ap-line) !important;
+    }
+    .nav-link {
+      color:var(--ap-muted) !important;
+      font-size:12.5px !important;
+      font-weight:500 !important;
+      letter-spacing:.005em !important;
+      text-shadow:none !important;
+    }
+    .nav-link:hover { color:var(--ap-ink) !important; text-shadow:none !important; }
+    .nav-link.nav-active { color:var(--ap-accent-ink) !important; }
+    .nav-link.nav-active::after {
+      background:var(--ap-accent) !important;
+      box-shadow:none !important;
+      height:1.5px !important;
+    }
+
+    /* ---- proportionally integrated logo ---- */
+    #siteHeader a[href="#view-home"] > div:first-child {
+      background:var(--ap-cta) !important;
+      background-image:none !important;
+      border-radius:12px !important;
+      box-shadow:none !important;
+      color:var(--ap-cta-text) !important;
+    }
+    #siteHeader a[href="#view-home"] > div.text-white { color:var(--ap-cta-text) !important; }
+    #siteHeader a[href="#view-home"] span { color:var(--ap-ink) !important; }
+    #siteHeader a[href="#view-home"] span.bg-clip-text {
+      color:var(--ap-accent-ink) !important;
+      -webkit-text-fill-color:var(--ap-accent-ink) !important;
+    }
+    #siteHeader a[href="#view-home"] > div:last-child > span:last-child { color:var(--ap-muted) !important; }
+
+    /* ---- primary CTA: solid muted emerald pill, no neon halo ---- */
+    a[href*="wa.me"],
+    main a.bg-gradient-to-r,
+    main button.bg-gradient-to-r:not(.dash-nav):not(.dash-mtab),
+    #siteHeader a.bg-gradient-to-r, #mobileMenu a.bg-gradient-to-r,
+    #estimatorModal button.bg-gradient-to-r {
+      background:var(--ap-cta) !important;
+      background-image:none !important;
+      color:var(--ap-cta-text) !important;
+      border:1px solid transparent !important;
+      border-radius:999px !important;
+      text-shadow:none !important;
+      box-shadow:0 2px 12px -6px rgba(20,164,115,.55) !important;
+    }
+    a[href*="wa.me"] *, main a.bg-gradient-to-r *,
+    main button.bg-gradient-to-r:not(.dash-nav):not(.dash-mtab) *,
+    #estimatorModal button.bg-gradient-to-r * { color:var(--ap-cta-text) !important; }
+    a[href*="wa.me"]:hover, main a.bg-gradient-to-r:hover {
+      box-shadow:0 4px 20px -8px rgba(20,164,115,.65) !important;
+      opacity:.92;
+    }
+    /* Package CTAs also carry a bg-white/5 utility, whose selector is more
+       specific than the CTA rule above. Reinstate the solid fill here so no
+       white-on-white label can ever appear. */
+    main a[href*="wa.me"][class], main a.bg-gradient-to-r[class],
+    #siteHeader a.bg-gradient-to-r[class], #mobileMenu a.bg-gradient-to-r[class],
+    main button.bg-gradient-to-r:not(.dash-nav):not(.dash-mtab)[class],
+    #estimatorModal button.bg-gradient-to-r[class] {
+      background:var(--ap-cta) !important;
+      background-image:none !important;
+      color:var(--ap-cta-text) !important;
+    }
+
+    /* ---- secondary / outline buttons + Apple-style text link ---- */
+    header button, #mobileMenu button, main button.apple-link {
+      background:transparent !important;
+      background-image:none !important;
+      border:1px solid var(--ap-line) !important;
+      border-radius:999px !important;
+      color:var(--ap-ink) !important;
+      box-shadow:none !important;
+      text-shadow:none !important;
+    }
+    header button:hover, #mobileMenu button:hover {
+      border-color:var(--ap-accent-2) !important;
+      color:var(--ap-accent-ink) !important;
+      box-shadow:none !important;
+    }
+    main button.apple-link {
+      border-color:transparent !important;
+      color:var(--ap-accent-ink) !important;
+      font-weight:600 !important;
+    }
+    main button.apple-link::after { content:' \2192'; font-size:1.15em; line-height:1; }
+
+    /* ---- bento-ish cards: soft radius, hairline border, near-invisible shadow ---- */
+    .lift, .dash-card, #dashboardCard, .tab-content, #estimatorModal > div {
+      background-color:var(--ap-surface) !important;
+      background-image:none !important;
+      border:1px solid var(--ap-line) !important;
+      border-radius:22px !important;
+      box-shadow:var(--ap-shadow) !important;
+    }
+    .lift:hover {
+      transform:translateY(-3px);
+      border-color:rgba(20,164,115,.28) !important;
+      box-shadow:0 16px 44px -26px rgba(0,0,0,.32) !important;
+    }
+    main [class*="border-white/"], #siteHeader [class*="border-white/"],
+    footer [class*="border-white/"] { border-color:var(--ap-line) !important; }
+    main [class*="bg-white/"] { background-color:var(--ap-surface-2) !important; }
+
+    /* ---- one geometry for every content tile ---- */
+    #view-modul .bg-ink-850, #view-proses .bg-ink-850,
+    #view-portfolio .bg-ink-850, #view-faq .bg-ink-850 {
+      background-color:var(--ap-surface) !important;
+      border:1px solid var(--ap-line) !important;
+      border-radius:20px !important;
+      box-shadow:var(--ap-shadow) !important;
+    }
+    /* hero badge + perks strip: same surface language as the cards */
+    #heroBadge {
+      background:#FFFFFF !important;
+      border:1px solid var(--ap-line) !important;
+      box-shadow:0 1px 2px rgba(16,16,19,.05) !important;
+      color:var(--ap-accent-ink) !important;
+      font-weight:600 !important;
+      letter-spacing:.01em !important;
+    }
+    #heroBadge svg.lucide { stroke:var(--ap-accent-ink) !important; }
+    #heroPerks {
+      background:var(--ap-surface) !important;
+      border:1px solid var(--ap-line) !important;
+      border-radius:20px !important;
+      padding:22px 26px !important;
+      box-shadow:var(--ap-shadow) !important;
+    }
+    /* This strip is a quiet summary directly under the CTA: keep it fully
+       legible on first paint instead of starting at opacity 0 (the generic
+       scroll-reveal otherwise makes it look washed out at load). */
+    #heroPerks .rv, #heroPerks .rv-shift {
+      opacity:1;
+      transform:none;
+      transition:none;
+    }
+
+    /* ---- dividers, section beam, progress ---- */
+    .view + .view { border-top-color:var(--ap-line) !important; }
+    .view:not(#view-home)::before {
+      background:linear-gradient(90deg, transparent, var(--ap-accent-soft), transparent) !important;
+      box-shadow:none !important;
+      height:1px !important;
+      opacity:.55;
+    }
+    #routeBar { background:var(--ap-accent) !important; box-shadow:none !important; height:2px !important; }
+    footer { background:var(--ap-surface) !important; border-top:1px solid var(--ap-line) !important; color:var(--ap-muted) !important; }
+    footer p, footer li, footer a, footer span { color:var(--ap-muted) !important; }
+
+    /* ---- thin geometric outline icons ---- */
+    svg.lucide {
+      stroke:var(--ap-muted) !important;
+      stroke-width:1.6px !important;
+      filter:none !important;
+    }
+    svg.lucide[class*="text-cyan-"], svg.lucide[class*="text-green-"],
+    svg.lucide[class*="text-emerald-"], svg.lucide[class*="text-orange-"] {
+      stroke:var(--ap-accent-ink) !important;
+    }
+    /* icons inside solid CTA must stay readable (higher specificity than above) */
+    a[href*="wa.me"] svg.lucide[class], main a.bg-gradient-to-r svg.lucide[class],
+    main button.bg-gradient-to-r svg.lucide[class],
+    #siteHeader a.bg-gradient-to-r svg.lucide[class],
+    #mobileMenu a.bg-gradient-to-r svg.lucide[class],
+    #estimatorModal button.bg-gradient-to-r svg.lucide[class] {
+      stroke:var(--ap-cta-text) !important;
+      filter:none !important;
+    }
+
+    /* ---- dashboard segmented controls ---- */
+    main .dash-nav, main .dash-mtab {
+      background:transparent !important;
+      background-image:none !important;
+      border:1px solid var(--ap-line) !important;
+      border-radius:999px !important;
+      color:var(--ap-muted) !important;
+      box-shadow:none !important;
+    }
+    main .dash-nav.sidebar-active, main button.dash-mtab.bg-gradient-to-r {
+      background:var(--ap-cta) !important;
+      background-image:none !important;
+      color:var(--ap-cta-text) !important;
+      border-color:transparent !important;
+      border-radius:999px !important;
+      box-shadow:none !important;
+    }
+
+    /* ---- estimator modal ---- */
+    #estimatorModal { background:rgba(0,0,0,.42) !important; backdrop-filter:blur(8px) !important; }
+    #estimatorModal button:not(.bg-gradient-to-r) { color:var(--ap-muted) !important; }
+
+    /* No prefers-color-scheme override: the canvas is deliberately white in
+       every OS theme. White CTA labels on #043927 reach 12.97:1. */
+    @media (prefers-reduced-motion: reduce) {
+      .lift:hover { transform:none !important; }
+    }
+  </style>
+
+  <style id="raycastConcept">
+    /* ================================================================
+       RAYCAST.COM-INSPIRED ELEMENT CONCEPT  |  DEEP GREEN #043927 TOKENS
+       Geometry + motion. Every colour below resolves to an --ap-* token
+       (white / #101013 / #043927 / #0E7A52 / #EFF8F3).
+       ================================================================ */
+    :root {
+      --rc-radius:12px; --rc-radius-sm:8px;
+      --rc-line:rgba(16,16,19,.12); --rc-line-soft:rgba(16,16,19,.07);
+      --rc-surface:#FFFFFF; --rc-surface-2:#F5F5F7; --rc-hover:#EFF8F3;
+      --rc-emerald:var(--ap-accent); --rc-emerald-2:var(--ap-accent-2);
+      --rc-shadow:0 1px 2px rgba(16,16,19,.045), 0 18px 40px -26px rgba(16,16,19,.30);
+      --rc-spring:cubic-bezier(.34, 1.42, .64, 1);
+    }
+
+    /* ---- 1. FLOATING ROUNDED NAV BAR (single compact bar, not a strip) ---- */
+    #siteHeader {
+      padding:10px 16px 0 !important;
+      background:transparent !important;
+      border:0 !important;
+    }
+    #siteHeader nav {
+      width:min(1280px, 100%) !important;
+      margin:0 auto !important;
+      overflow:hidden;
+      background:rgba(255,255,255,.86) !important;
+      border:1px solid var(--rc-line) !important;
+      border-bottom:1px solid var(--rc-line) !important;
+      border-radius:var(--rc-radius) !important;
+      box-shadow:0 2px 10px rgba(16,16,19,.05), 0 20px 40px -32px rgba(16,16,19,.35) !important;
+      backdrop-filter:blur(20px) saturate(180%) !important;
+      -webkit-backdrop-filter:blur(20px) saturate(180%) !important;
+      transition:box-shadow .32s ease, border-color .32s ease, transform .32s var(--rc-spring) !important;
+    }
+    #siteHeader.rc-scrolled nav {
+      border-color:rgba(20,164,115,.16) !important;
+      box-shadow:0 5px 16px rgba(16,16,19,.075), 0 26px 48px -34px rgba(16,16,19,.42) !important;
+    }
+    #siteHeader nav > div:first-child { height:60px !important; }
+    #siteHeader .nav-link {
+      padding:6px 9px !important;
+      border-radius:6px;
+      transition:color .2s ease, background-color .2s ease, transform .28s var(--rc-spring) !important;
+    }
+    #siteHeader .nav-link:hover {
+      background:var(--rc-hover) !important;
+      color:var(--ap-ink) !important;
+      transform:translateY(-1px);
+    }
+    #siteHeader .nav-link.nav-active { background:var(--rc-hover) !important; }
+    /* Raycast keeps the whole bar on ONE line; Tailwind's space-x-* utilities
+       are replaced by a measured gap so no label ever wraps to two lines. */
+    #siteHeader .nav-link { white-space:nowrap; }
+    #siteHeader nav > div:first-child > div:nth-child(2) { gap:14px !important; }
+    #siteHeader nav > div:first-child > div:nth-child(2) > a {
+      margin-left:0 !important; padding-left:6px !important; padding-right:6px !important;
+    }
+    #siteHeader nav > div:first-child > div:nth-child(3) { gap:6px !important; }
+    #siteHeader nav > div:first-child > div:nth-child(3) > * {
+      margin-left:0 !important; white-space:nowrap;
+      padding-left:12px !important; padding-right:12px !important;
+    }
+    #siteHeader a[href="#view-home"] > div:last-child > span:last-child { white-space:nowrap; }
+    /* the second action button only joins once the bar has room for it */
+    @media (min-width:1024px) and (max-width:1439px) {
+      #siteHeader nav > div:first-child > div:nth-child(3) > button:nth-of-type(2) { display:none; }
+    }
+    #siteHeader .nav-link.nav-active::after {
+      left:50% !important; right:auto !important; bottom:0 !important;
+      width:4px !important; height:4px !important;
+      border-radius:999px !important; background:var(--ap-accent) !important;
+      box-shadow:none !important; transform:translateX(-50%) !important;
+    }
+
+    /* ---- 2. COMPACT ROUNDED-RECT BUTTONS (Raycast, not pill) ---- */
+    body a[href*="wa.me"],
+    body main a.bg-gradient-to-r,
+    body main button.bg-gradient-to-r:not(.dash-nav):not(.dash-mtab),
+    body #siteHeader a.bg-gradient-to-r,
+    body #mobileMenu a.bg-gradient-to-r,
+    body #estimatorModal button.bg-gradient-to-r,
+    body #siteHeader button, body #mobileMenu button,
+    body main button.apple-link,
+    body main .dash-nav, body main .dash-mtab,
+    body .tab-btn, #heroBadge {
+      border-radius:var(--rc-radius-sm) !important;
+    }
+    /* badges/chips follow the same rounded-rect language as the buttons */
+    main [class*="rounded-full"], footer [class*="rounded-full"] {
+      border-radius:var(--rc-radius-sm) !important;
+    }
+    #siteHeader a[href*="wa.me"], #siteHeader button, #mobileMenu button,
+    main a[href*="wa.me"], main a.bg-gradient-to-r, main button.apple-link,
+    main button.bg-gradient-to-r, #estimatorModal button.bg-gradient-to-r, .tab-btn {
+      transition:transform .30s var(--rc-spring), box-shadow .30s ease,
+                 border-color .22s ease, background-color .22s ease, color .22s ease !important;
+    }
+    #siteHeader a[href*="wa.me"]:hover, #siteHeader button:hover, #mobileMenu button:hover,
+    main a[href*="wa.me"]:hover, main a.bg-gradient-to-r:hover,
+    main button.bg-gradient-to-r:hover, #estimatorModal button.bg-gradient-to-r:hover,
+    main button.apple-link:hover, .tab-btn:hover {
+      transform:translateY(-2px) scale(1.015);
+    }
+
+    /* ---- 3. LAUNCHER-WINDOW BOXES: 12px radius, hairline, inset top light ---- */
+    .lift, .dash-card, #dashboardCard, .tab-content, #estimatorModal > div,
+    #view-modul .bg-ink-850, #view-proses .bg-ink-850,
+    #view-portfolio .bg-ink-850, #view-faq .bg-ink-850, #heroPerks {
+      border-radius:var(--rc-radius) !important;
+      border:1px solid var(--rc-line) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), var(--rc-shadow) !important;
+    }
+    .lift, .dash-card { position:relative !important; }
+    .lift:hover, .dash-card:hover {
+      transform:translateY(-2px) scale(1.008) !important;
+      border-color:rgba(20,164,115,.30) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6),
+                 0 18px 44px -26px rgba(16,16,19,.34),
+                 0 0 0 1px rgba(20,164,115,.06) !important;
+    }
+    /* subtle pointer spotlight: one delegated listener writes --rc-mx/--rc-my */
+    .lift::after, .dash-card::after {
+      content:''; position:absolute; inset:0; border-radius:inherit;
+      pointer-events:none; opacity:0; transition:opacity .35s ease;
+      background:radial-gradient(280px circle at var(--rc-mx,50%) var(--rc-my,50%),
+                 rgba(20,164,115,.085), transparent 70%);
+    }
+    .lift:hover::after, .dash-card:hover::after { opacity:1; }
+
+    /* ---- 4. DASHBOARD CARD -> COMMAND WINDOW CHROME ---- */
+    #dashboardCard { overflow:hidden; }
+    #dashboardCard > div:first-child {
+      padding:2px 4px 12px !important;
+      border-bottom:1px solid var(--rc-line-soft) !important;
+    }
+    #dashboardCard > div:first-child > div:first-child > span:nth-child(1),
+    #dashboardCard > div:first-child > div:first-child > span:nth-child(2) {
+      background:rgba(16,16,19,.18) !important;
+      width:10px !important; height:10px !important;
+    }
+    #dashboardCard > div:first-child > div:first-child > span:nth-child(3) {
+      background:var(--rc-emerald) !important;
+      width:10px !important; height:10px !important;
+    }
+    #dashboardCard > div:first-child > div:first-child > span.font-mono {
+      background:var(--rc-surface-2) !important;
+      border:1px solid var(--rc-line-soft) !important;
+      border-radius:6px !important;
+      padding:3px 10px !important;
+      color:var(--ap-muted) !important;
+    }
+    #dashboardCard > div:first-child > span:last-child {
+      border-radius:6px !important;
+      background:var(--rc-hover) !important;
+      border-color:var(--rc-line-soft) !important;
+      color:var(--ap-accent-ink) !important;
+    }
+    /* sidebar becomes a result list with a selected-row highlight */
+    #dashSidebar { border-right:1px solid var(--rc-line-soft) !important; gap:4px !important; }
+    #dashSidebar .dash-nav {
+      position:relative;
+      padding:8px 10px !important;
+      border-radius:6px !important;
+      border-color:transparent !important;
+      transition:background-color .18s ease, color .18s ease, transform .28s var(--rc-spring) !important;
+    }
+    #dashSidebar .dash-nav:hover {
+      background:var(--rc-hover) !important;
+      border-color:transparent !important;
+      transform:translateX(2px);
+    }
+    #dashSidebar .dash-nav.sidebar-active {
+      background:var(--rc-hover) !important;
+      color:var(--ap-accent-ink) !important;
+      box-shadow:none !important;
+    }
+    /* straight accent bar, not a rounded inset shadow that reads as a bracket */
+    #dashSidebar .dash-nav.sidebar-active::before {
+      content:''; position:absolute; left:3px; top:7px; bottom:7px;
+      width:3px; border-radius:3px; background:var(--ap-accent);
+    }
+    #dashSidebar .sidebar-active::after { display:none !important; }
+    .dash-row { border-bottom:1px solid var(--rc-line-soft); border-radius:6px; }
+    .view.active .dash-row { animation:rcRowIn .34s var(--rc-spring) both; }
+    .dash-panel .dash-row:nth-child(2) { animation-delay:.02s; }
+    .dash-panel .dash-row:nth-child(3) { animation-delay:.04s; }
+    .dash-panel .dash-row:nth-child(4) { animation-delay:.06s; }
+    .dash-panel .dash-row:nth-child(5) { animation-delay:.08s; }
+    .dash-panel .dash-row:nth-child(6) { animation-delay:.10s; }
+    .dash-panel .dash-row:nth-child(n+7) { animation-delay:.12s; }
+    @keyframes rcRowIn {
+      from { opacity:0; transform:translate3d(-10px,4px,0) scale(.99); }
+      to   { opacity:1; transform:none; }
+    }
+
+    /* ---- 5. HARMONISE REMAINING ELEMENT COLOURS ---- */
+    #heroPerks [class*="bg-blue-500/15"], #heroPerks [class*="bg-orange-500/15"],
+    footer [class*="bg-cyan-500/10"], #estimatorModal [class*="bg-blue-500/10"] {
+      background:var(--rc-hover) !important;
+      border:1px solid var(--rc-line-soft) !important;
+      border-radius:8px !important;
+    }
+    #estimatorModal label {
+      border-radius:8px !important;
+      border-color:var(--rc-line) !important;
+    }
+    #estimatorModal select, #estimatorModal .bg-blue-500\/10 {
+      border-radius:8px !important;
+    }
+    /* calm the old neon sweeps down to crisp Raycast-like transitions */
+    .dash-scan { opacity:.32 !important; animation-duration:9s !important; }
+    .dash-card::before {
+      background:linear-gradient(90deg, transparent, rgba(20,164,115,.26), transparent) !important;
+      animation-duration:7s !important;
+    }
+    .live-dot::after { animation-duration:2.2s !important; }
+    .view:not(#view-home)::before { width:min(420px, 60%) !important; opacity:.7; }
+
+    /* ---- 6. RAYCAST COMMAND PALETTE ---- */
+    #cmdTrigger { display:none; }
+    @media (min-width:1280px) { #cmdTrigger { display:inline-flex; } }
+    .rc-kbd {
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:20px; height:20px; padding:0 5px;
+      border:1px solid var(--rc-line); border-bottom-width:2px;
+      border-radius:5px; background:var(--rc-surface-2);
+      color:var(--ap-muted); font-family:inherit; font-size:10px;
+      font-weight:600; line-height:1; white-space:nowrap;
+    }
+    .rc-overlay {
+      display:none; position:fixed; inset:0; z-index:90;
+      align-items:flex-start; justify-content:center;
+      padding:min(10vh, 96px) 16px 16px;
+    }
+    .rc-overlay.rc-open { display:flex; }
+    .rc-backdrop {
+      position:absolute; inset:0;
+      background:rgba(16,16,19,.28);
+      backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+      animation:rcFade .18s ease both;
+    }
+    .rc-window {
+      position:relative; width:min(620px, 100%); max-height:min(680px, 84vh);
+      display:flex; flex-direction:column; overflow:hidden;
+      background:var(--rc-surface);
+      border:1px solid var(--rc-line); border-radius:var(--rc-radius);
+      box-shadow:0 32px 80px -28px rgba(16,16,19,.45), 0 2px 8px rgba(16,16,19,.06);
+      animation:rcPop .26s var(--rc-spring) both;
+    }
+    .rc-window::before {
+      content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+      background:radial-gradient(320px circle at var(--rc-mx,50%) var(--rc-my,50%),
+                 rgba(20,164,115,.055), transparent 70%);
+    }
+    .rc-window > * { position:relative; z-index:1; }
+    @keyframes rcFade { from { opacity:0; } to { opacity:1; } }
+    @keyframes rcFadeOut { to { opacity:0; } }
+    @keyframes rcPop {
+      from { opacity:0; transform:translateY(-10px) scale(.975); }
+      to   { opacity:1; transform:none; }
+    }
+    @keyframes rcPopOut { to { opacity:0; transform:translateY(-6px) scale(.985); } }
+    .rc-overlay.rc-closing .rc-window { animation:rcPopOut .16s ease both; }
+    .rc-overlay.rc-closing .rc-backdrop { animation:rcFadeOut .16s ease both; }
+
+    .rc-inputrow { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--rc-line-soft); }
+    .rc-inputrow svg { width:18px; height:18px; flex:none; stroke:var(--ap-muted); stroke-width:1.8; fill:none; }
+    #cmdInput {
+      flex:1; min-width:0; border:0; outline:0; background:transparent;
+      color:var(--ap-ink); font-family:inherit; font-size:15px;
+    }
+    #cmdInput::placeholder { color:#8A8A90; }
+    .rc-list { overflow-y:auto; padding:8px; }
+    .rc-group { padding:7px 10px 4px; color:var(--ap-muted); font-size:10px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; }
+    .rc-item {
+      position:relative;
+      display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+      padding:9px 12px; border:0; border-radius:8px; background:transparent;
+      color:var(--ap-ink); font-family:inherit; cursor:pointer;
+      transition:background-color .16s ease, transform .28s var(--rc-spring);
+      animation:rcItemIn .32s cubic-bezier(.22,1,.36,1) both;
+    }
+    .rc-list.rc-noanim .rc-item { animation:none !important; }
+    @keyframes rcItemIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+    .rc-item:hover { background:var(--rc-hover); }
+    .rc-item.rc-sel { background:var(--rc-hover); box-shadow:none; }
+    .rc-item.rc-sel::before {
+      content:''; position:absolute; left:4px; top:8px; bottom:8px;
+      width:3px; border-radius:3px; background:var(--ap-accent);
+    }
+    .rc-item .rc-i {
+      width:30px; height:30px; flex:none; border-radius:7px;
+      background:var(--rc-surface-2); border:1px solid var(--rc-line-soft);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .rc-item .rc-i svg { width:15px; height:15px; stroke:var(--ap-accent-ink); stroke-width:1.7; fill:none; }
+    .rc-item .rc-txt { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .rc-item .rc-txt b { font-size:13.5px; font-weight:600; }
+    .rc-item .rc-txt small { color:var(--ap-muted); font-size:11px; }
+    .rc-item .rc-kbd { margin-left:auto; letter-spacing:.04em; }
+    .rc-empty { padding:24px; text-align:center; color:var(--ap-muted); font-size:13px; }
+    .rc-foot {
+      display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+      padding:10px 14px; border-top:1px solid var(--rc-line-soft);
+      background:var(--rc-surface-2); color:var(--ap-muted); font-size:10.5px;
+    }
+    .rc-foot > span { display:inline-flex; align-items:center; gap:4px; }
+    .rc-foot .rc-brand { margin-left:auto; font-weight:600; color:var(--ap-accent-ink); }
+
+    /* ---- 7. MOTION PREFERENCES ---- */
+    @media (prefers-reduced-motion: reduce) {
+      #siteHeader nav, #siteHeader .nav-link, .lift, .dash-card, .tab-btn,
+      #dashSidebar .dash-nav, .rc-item, .lift::after, .dash-card::after {
+        transition:none !important;
+      }
+      .rc-window, .rc-backdrop, .rc-item, .view.active .dash-row,
+      .dash-card::before, .dash-scan, .live-dot::after, .sidebar-active::after {
+        animation:none !important;
+      }
+      .rc-window, .rc-backdrop, .rc-item { opacity:1 !important; transform:none !important; }
+      .lift::after, .dash-card::after { display:none !important; }
+      .dash-row { opacity:1 !important; transform:none !important; }
+      .lift:hover, .dash-card:hover, .tab-btn:hover,
+      #siteHeader a[href*="wa.me"]:hover, #siteHeader button:hover,
+      main a[href*="wa.me"]:hover, main a.bg-gradient-to-r:hover,
+      main button.bg-gradient-to-r:hover, main button.apple-link:hover {
+        transform:none !important;
+      }
+    }
+  </style>
+  <style id="limeHero">
+    /* ================================================================
+       DEEP GREEN #043927  +  RAYCAST.COM-STYLE HERO MOTION
+       Solid accents use #043927. Glows use lighter same-hue #14A473 so beams
+       and hot keys stay luminous on the near-black stage.
+       ================================================================ */
+
+    /* ---- readable deep-green headline with a slow moving gradient ---- */
+    main #view-home h1 span.bg-clip-text {
+      color:#043927 !important;
+      -webkit-text-fill-color:transparent !important;
+      background-image:linear-gradient(90deg,#043927 0%,#0E7A52 48%,#043927 100%) !important;
+      background-size:200% 100% !important;
+      -webkit-background-clip:text !important;
+      background-clip:text !important;
+      animation:limeShimmer 9s ease-in-out infinite;
+    }
+    @keyframes limeShimmer { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+
+    /* ---- Raycast diagonal light beams, tuned for the white canvas ---- */
+    #heroBeams { position:absolute; inset:-22% -12%; transform:rotate(-28deg); pointer-events:none; }
+    #heroBeams i {
+      position:absolute; top:-25%; left:var(--x); width:9%; height:150%;
+      border-radius:50%; filter:blur(16px);
+      background:linear-gradient(180deg, transparent 0%, rgba(20,164,115,.17) 38%,
+                 rgba(20,164,115,.015) 76%, transparent 100%);
+      animation:limeBeamDrift 11s ease-in-out infinite; animation-delay:var(--d);
+    }
+    #heroBeams .hb-wash {
+      position:absolute; left:50%; top:38%; width:66%; height:62%;
+      transform:translate(-50%,-50%); filter:blur(26px);
+      background:radial-gradient(ellipse at center, rgba(20,164,115,.13), transparent 70%);
+      animation:limeWash 9s ease-in-out infinite;
+    }
+    @keyframes limeBeamDrift { 0%,100% { transform:translateY(-4%); opacity:.5; } 50% { transform:translateY(5%); opacity:1; } }
+    @keyframes limeWash { 0%,100% { opacity:.55; } 50% { opacity:1; } }
+    #heroBadge { animation:limeFloat 5s ease-in-out infinite; }
+    @keyframes limeFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
+
+    /* ---- dark product stage: command window + keyboard illustration ---- */
+    #heroStage {
+      position:relative; isolation:isolate; overflow:hidden;
+      max-width:960px; margin:56px auto 0; padding:34px 26px 26px;
+      border:1px solid rgba(16,16,19,.10); border-radius:12px;
+      background:#04130D;
+      box-shadow:0 1px 2px rgba(16,16,19,.05), 0 30px 66px -38px rgba(16,16,19,.62);
+      opacity:1 !important; transform:none !important; transition:none !important;
+    }
+    #heroStage .hs-beam-clip { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+    #heroStage .hs-beams { position:absolute; inset:0; transform:rotate(-34deg) scale(1.8); pointer-events:none; }
+    #heroStage .hs-beams i {
+      position:absolute; top:-25%; left:var(--x); width:10%; height:150%;
+      border-radius:50%; filter:blur(22px); opacity:.6;
+      background:linear-gradient(180deg, transparent 0%, rgba(20,164,115,0) 20%,
+                 rgba(20,164,115,.55) 48%, rgba(20,164,115,.06) 76%, transparent 100%);
+      animation:hsBeam 9s ease-in-out infinite; animation-delay:var(--d);
+    }
+    @keyframes hsBeam { 0%,100% { transform:translateY(-6%); opacity:.35; } 50% { transform:translateY(7%); opacity:.95; } }
+    #heroStage .hs-glow {
+      position:absolute; z-index:0; left:50%; bottom:-55%; width:78%; height:90%;
+      transform:translateX(-50%); filter:blur(34px); pointer-events:none;
+      background:radial-gradient(ellipse at center, rgba(20,164,115,.34), transparent 70%);
+      animation:hsGlow 7s ease-in-out infinite;
+    }
+    @keyframes hsGlow { 0%,100% { opacity:.55; } 50% { opacity:1; } }
+
+    /* floating launcher / command window */
+    .hs-cmd {
+      position:relative; z-index:2; width:min(560px,100%); margin:0 auto 28px;
+      border-radius:12px; overflow:hidden;
+      background:rgba(8,26,19,.94); border:1px solid rgba(20,164,115,.30);
+      box-shadow:0 24px 56px -26px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.05);
+      animation:hsFloat 6s ease-in-out infinite;
+    }
+    @keyframes hsFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+    .hs-cmd-in { display:flex; align-items:center; gap:10px; padding:13px 15px; border-bottom:1px solid rgba(255,255,255,.07); }
+    .hs-cmd-in svg { width:17px; height:17px; flex:none; stroke:#8CBEAA; stroke-width:1.8; fill:none; }
+    .hs-type { color:#E2F5EC; font-size:14px; white-space:nowrap; overflow:hidden; }
+    .hs-caret { display:inline-block; width:2px; height:15px; margin-left:2px; vertical-align:-3px; background:#14A473; animation:limeCaret 1s step-end infinite; }
+    @keyframes limeCaret { 0%,49% { opacity:1; } 50%,100% { opacity:0; } }
+    .hs-cmd-in kbd {
+      margin-left:auto; flex:none; padding:3px 7px; border-radius:5px;
+      border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06);
+      color:#A9CFBE; font-size:10px; font-weight:600; font-family:inherit;
+    }
+    .hs-rows { padding:6px; }
+    .hs-row {
+      position:relative;
+      display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:7px;
+      color:#A9CFBE; font-size:12.5px;
+      transition:background-color .25s ease, color .25s ease, transform .3s cubic-bezier(.34,1.42,.64,1);
+    }
+    .hs-row.on { background:rgba(20,164,115,.15); color:#EDF8F2; transform:translateX(3px); }
+    .hs-row.on::before {
+      content:''; position:absolute; left:4px; top:7px; bottom:7px;
+      width:3px; border-radius:3px; background:#14A473;
+    }
+    .hs-row .hs-ico {
+      width:22px; height:22px; flex:none; display:grid; place-items:center; border-radius:6px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06);
+      color:#7DD1A6; font-size:10px; font-weight:700;
+    }
+    .hs-row .hs-hint { margin-left:auto; color:#8CB5A4; font-size:10.5px; }
+
+    /* CSS-rendered keyboard, the same idea as raycast.com's keyboard section */
+    .hs-kb { position:relative; z-index:2; max-width:760px; margin:0 auto; font-size:clamp(6.5px,.95vw,13px); }
+    .hs-kb-row { display:flex; justify-content:center; gap:.42em; margin-bottom:.42em; }
+    .hs-kb-row:last-child { margin-bottom:0; }
+    .hs-key {
+      flex:1 1 0; min-width:0; height:3.6em; padding:0 .2em;
+      display:flex; align-items:center; justify-content:center;
+      border-radius:.5em; border:1px solid rgba(255,255,255,.075);
+      background:#0C1E16; color:#A9CFBE;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 4px rgba(0,0,0,.55);
+      font-size:1em; font-weight:600; line-height:1; white-space:nowrap; overflow:hidden;
+      animation:hsKeyWave 7s linear infinite; animation-delay:calc(var(--i) * .085s);
+    }
+    @keyframes hsKeyWave {
+      0%, 70%, 100% { filter:none; }
+      76% { filter:brightness(1.7); border-color:rgba(20,164,115,.65); color:#DDF4E8;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 0 16px -3px rgba(20,164,115,.55); }
+    }
+    .hs-key.wide   { flex-grow:1.6; }
+    .hs-key.xwide  { flex-grow:2.1; }
+    .hs-key.cmdkey { flex-grow:2.6; font-size:.88em; }
+    .hs-key.cmdkey .hs-cmd-txt { margin-left:.35em; }
+    .hs-key.space  { flex-grow:7; }
+    .hs-key.hot {
+      border-color:rgba(20,164,115,.6); color:#D3F0E1;
+      animation:hsHot 3.4s ease-in-out infinite;
+    }
+    @keyframes hsHot {
+      0%,100% { box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 0 0 1px rgba(20,164,115,.12), 0 0 16px -6px rgba(20,164,115,.45); }
+      50%     { box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 0 0 1px rgba(20,164,115,.28), 0 0 26px -4px rgba(20,164,115,.85); }
+    }
+    .hs-foot { position:relative; z-index:2; margin:18px 0 0; text-align:center; color:#8FB5A4; font-size:11px; letter-spacing:.02em; }
+    .hs-foot kbd {
+      display:inline-block; padding:2px 6px; margin:0 2px; border-radius:5px;
+      border:1px solid rgba(20,164,115,.35); border-bottom-width:2px;
+      background:rgba(20,164,115,.10); color:#C4EBD8; font-family:inherit;
+      font-size:10px; font-weight:700;
+    }
+    @media (max-width:640px) {
+      #heroStage { margin-top:36px; padding:22px 12px 18px; }
+      .hs-cmd-in { padding:10px 11px; }
+      .hs-type { font-size:11.5px; }
+      .hs-row { font-size:10.5px; padding:6px 8px; }
+      .hs-row .hs-hint { display:none; }
+      .hs-kb { font-size:clamp(6px,1.7vw,9px); }
+      .hs-key .hs-cmd-txt { display:none; }
+      .hs-foot { font-size:10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #heroBeams i, #heroBeams .hb-wash, #heroBadge,
+      main #view-home h1 span.bg-clip-text,
+      #heroStage .hs-beams i, #heroStage .hs-glow, .hs-cmd,
+      .hs-caret, .hs-key, .hs-key.hot { animation:none !important; }
+      .hs-key, .hs-key.hot { filter:none !important; opacity:1 !important; }
+      .hs-row { transition:none !important; }
+    }
+  </style>
 </head>
 <body class="bg-ink-950 text-slate-200 font-sans antialiased selection:bg-blue-500/30 selection:text-white overflow-x-hidden">
 
@@ -353,7 +1186,7 @@
   <div id="cursorRing" aria-hidden="true"></div>
 
   <!-- PERSISTENT ANIMATED BACKGROUND (conic wash + aurora + dots + motes + grain) -->
-  <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+  <div id="bgLayers" class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
 
     <!-- 1. slow rotating conic colour wash -->
     <div id="bgConic" class="absolute left-1/2 top-1/2 w-[130vmax] h-[130vmax]"></div>
@@ -369,6 +1202,9 @@
     <div class="absolute inset-0" style="mask-image:radial-gradient(ellipse 85% 75% at 50% 42%, #000 18%, transparent 76%);-webkit-mask-image:radial-gradient(ellipse 85% 75% at 50% 42%, #000 18%, transparent 76%);">
       <div id="bgGrid" class="absolute inset-[-48px]"></div>
     </div>
+
+    <!-- 3b. micro circuit / carbon weave (only visible on close inspection) -->
+    <div id="bgCircuit"></div>
 
     <!-- 4. floating light motes -->
     <canvas id="bgParticles" class="absolute inset-0 w-full h-full"></canvas>
@@ -386,12 +1222,12 @@
   <!-- STICKY HEADER (auto-hide on scroll down) -->
   <header id="siteHeader" class="sticky top-0 z-50 will-change-transform">
   <!-- NAVIGATION BAR (SPA) -->
-  <nav class="bg-ink-900/70 backdrop-blur-xl border-b border-white/5">
+  <nav class="relative bg-ink-900/70 backdrop-blur-xl border-b border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
 
       <!-- LOGO -->
       <a href="#view-home" onclick="navigate('home'); return false;" class="flex items-center gap-2 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_22px_-2px_rgba(59,130,246,0.7)] group-hover:scale-105 transition">J</div>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-extrabold text-xl shadow-[0_0_22px_-2px_rgba(20,164,115,0.7)] group-hover:scale-105 transition">J</div>
         <div>
           <span class="text-xl font-extrabold tracking-tight text-white block leading-none">JURAGAN<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">WEB</span></span>
           <span class="text-[10px] tracking-wider text-slate-500 uppercase font-semibold block mt-0.5">Software & Web Agency</span>
@@ -409,10 +1245,15 @@
 
       <!-- ACTION BUTTONS -->
       <div class="hidden sm:flex items-center space-x-3">
+        <button id="cmdTrigger" onclick="openCmd()" class="px-3 py-2 text-sm font-semibold inline-flex items-center gap-2" aria-label="Buka navigasi cepat">
+          <i data-lucide="search" class="w-4 h-4"></i>
+          <span class="hidden xl:inline">Cari</span>
+          <kbd class="rc-kbd" data-rc-mod>&#8984;K</kbd>
+        </button>
         <button onclick="openEstimatorModal()" class="px-4 py-2.5 rounded-full border border-white/15 text-slate-200 text-sm font-semibold hover:border-cyan-400/60 hover:text-cyan-300 transition flex items-center gap-2">
           <i data-lucide="calculator" class="w-4 h-4"></i> Hitung Estimasi
         </button>
-        <a href="https://wa.me/6288983636944?text=Halo%20Juraganweb,%20saya%20ingin%20konsultasi%20pembuatan%20website/sistem%20dengan%20sistem%20kontrak%20proyek." target="_blank" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)] transition flex items-center gap-2">
+        <a href="https://wa.me/6288983636944?text=Halo%20Juraganweb,%20saya%20ingin%20konsultasi%20pembuatan%20website/sistem%20dengan%20sistem%20kontrak%20proyek." target="_blank" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(20,164,115,0.7)] transition flex items-center gap-2">
           <i data-lucide="message-circle" class="w-4 h-4"></i> Konsultasi WhatsApp
         </a>
       </div>
@@ -433,10 +1274,21 @@
         <a href="#view-portfolio" onclick="navigate('portfolio'); return false;" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">Portofolio</a>
         <a href="#view-faq" onclick="navigate('faq'); return false;" class="block px-3 py-2.5 rounded-lg text-slate-300 hover:bg-white/5 hover:text-cyan-300">FAQ</a>
         <div class="pt-2 grid grid-cols-1 gap-2">
+          <button onclick="openCmd(); toggleMobileMenu(false)" class="w-full px-4 py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2">
+            <i data-lucide="search" class="w-4 h-4"></i> Cari Halaman / Aksi
+            <kbd class="rc-kbd" data-rc-mod>&#8984;K</kbd>
+          </button>
           <button onclick="openEstimatorModal(); toggleMobileMenu(false)" class="w-full px-4 py-2.5 rounded-full border border-white/15 text-slate-200 text-sm font-semibold">Hitung Estimasi</button>
           <a href="https://wa.me/6288983636944" target="_blank" class="w-full px-4 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold text-center">Konsultasi WhatsApp</a>
         </div>
       </div>
+    </div>
+    <!-- thin outline graphic text confirming the theme; absolutely positioned,
+         so it does not shift the nav row or any other layout element -->
+    <div class="rz-micro hidden lg:flex" aria-hidden="true">
+      <span>APPLE-INSPIRED SYSTEM</span>
+      <span class="rz-micro-dot"></span>
+      <span>STRUCTURE RETAINED</span>
     </div>
   </nav>
   </header>
@@ -452,14 +1304,14 @@
           <svg class="aurora-streaks" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
             <defs>
               <linearGradient id="gBlue" x1="0" y1="1" x2="0.45" y2="0">
-                <stop offset="0" stop-color="#1D4ED8" stop-opacity="0"/>
-                <stop offset="0.45" stop-color="#3B82F6" stop-opacity="0.9"/>
-                <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+                <stop offset="0" stop-color="#043927" stop-opacity="0"/>
+                <stop offset="0.45" stop-color="#043927" stop-opacity="0.9"/>
+                <stop offset="1" stop-color="#043927" stop-opacity="0"/>
               </linearGradient>
               <linearGradient id="gRed" x1="1" y1="1" x2="0.55" y2="0">
-                <stop offset="0" stop-color="#B91C1C" stop-opacity="0"/>
-                <stop offset="0.45" stop-color="#EF4444" stop-opacity="0.9"/>
-                <stop offset="1" stop-color="#F59E0B" stop-opacity="0"/>
+                <stop offset="0" stop-color="#043927" stop-opacity="0"/>
+                <stop offset="0.45" stop-color="#043927" stop-opacity="0.9"/>
+                <stop offset="1" stop-color="#0E7A52" stop-opacity="0"/>
               </linearGradient>
             </defs>
             <path class="streak-blue"  d="M-140,940 C 320,760 400,430 250,-90" stroke="url(#gBlue)" stroke-width="150" fill="none" stroke-linecap="round"/>
@@ -467,11 +1319,21 @@
             <path class="streak-red"   d="M1580,940 C 1120,760 1040,430 1190,-90" stroke="url(#gRed)" stroke-width="150" fill="none" stroke-linecap="round"/>
             <path class="streak-red2"  d="M1480,1000 C 1160,720 900,540 1010,-70" stroke="url(#gRed)" stroke-width="64" fill="none" stroke-linecap="round"/>
           </svg>
+          <div id="heroBeams" aria-hidden="true">
+            <i style="--x:2%;--d:0s"></i>
+            <i style="--x:17%;--d:-1.4s"></i>
+            <i style="--x:32%;--d:-2.8s"></i>
+            <i style="--x:47%;--d:-4.2s"></i>
+            <i style="--x:62%;--d:-5.6s"></i>
+            <i style="--x:77%;--d:-7.0s"></i>
+            <i style="--x:90%;--d:-8.4s"></i>
+            <span class="hb-wash"></span>
+          </div>
         </div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center max-w-3xl mx-auto">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-cyan-300 text-xs font-semibold mb-6 backdrop-blur">
+          <div class="text-center max-w-5xl mx-auto">
+            <div id="heroBadge" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-cyan-300 text-xs font-semibold mb-6 backdrop-blur">
               <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i>
               Model Kontrak Proyek Sekali Bayar • Tanpa Biaya Langganan Bulanan Paksaan
             </div>
@@ -486,11 +1348,11 @@
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-base shadow-[0_0_35px_-5px_rgba(59,130,246,0.85)] hover:shadow-[0_0_45px_-5px_rgba(34,211,238,0.85)] transition flex items-center justify-center gap-3">
+              <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-base shadow-[0_0_35px_-5px_rgba(20,164,115,0.85)] hover:shadow-[0_0_45px_-5px_rgba(20,164,115,0.85)] transition flex items-center justify-center gap-3">
                 <span>Pilih Paket Kontrak</span>
                 <i data-lucide="arrow-right" class="w-5 h-5"></i>
               </a>
-              <button onclick="openEstimatorModal()" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white/5 border border-white/15 text-white hover:border-orange-400/60 hover:text-orange-300 font-bold text-base transition flex items-center justify-center gap-2">
+              <button onclick="openEstimatorModal()" class="apple-link w-full sm:w-auto px-8 py-4 rounded-full bg-white/5 border border-white/15 text-white hover:border-orange-400/60 hover:text-orange-300 font-bold text-base transition flex items-center justify-center gap-2">
                 <i data-lucide="sliders" class="w-5 h-5 text-orange-400"></i>
                 <span>Simulasi Fitur &amp; Harga</span>
               </button>
@@ -504,8 +1366,44 @@
 
           </div>
 
+          <!-- RAYCAST-STYLE HERO STAGE: beams + command window + keyboard -->
+          <div id="heroStage">
+            <div class="hs-beam-clip" aria-hidden="true"><div class="hs-beams">
+            <i style="--x:2%;--d:0s"></i>
+            <i style="--x:17%;--d:-1.4s"></i>
+            <i style="--x:32%;--d:-2.8s"></i>
+            <i style="--x:47%;--d:-4.2s"></i>
+            <i style="--x:62%;--d:-5.6s"></i>
+            <i style="--x:77%;--d:-7.0s"></i>
+            <i style="--x:90%;--d:-8.4s"></i>
+            </div></div>
+            <div class="hs-glow" aria-hidden="true"></div>
+
+            <div class="hs-cmd" aria-hidden="true">
+              <div class="hs-cmd-in">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+                <span class="hs-type"><span id="hsTyped"></span><span class="hs-caret"></span></span>
+                <kbd>&#8984; K</kbd>
+              </div>
+              <div class="hs-rows">
+                <div class="hs-row on"><span class="hs-ico">M</span><span>Modul Sistem</span><span class="hs-hint">MOD</span></div>
+                <div class="hs-row"><span class="hs-ico">BY</span><span>Biaya Proyek</span><span class="hs-hint">BYA</span></div>
+                <div class="hs-row"><span class="hs-ico">&#8361;</span><span>Hitung Estimasi</span><span class="hs-hint">EST</span></div>
+              </div>
+            </div>
+
+            <div class="hs-kb" role="img" aria-label="Ilustrasi keyboard dengan tombol Command dan Space menyala">
+              <div class="hs-kb-row"><span class="hs-key wide" style="--i:0">esc</span><span class="hs-key" style="--i:1">1</span><span class="hs-key" style="--i:2">2</span><span class="hs-key" style="--i:3">3</span><span class="hs-key" style="--i:4">4</span><span class="hs-key" style="--i:5">5</span><span class="hs-key" style="--i:6">6</span><span class="hs-key" style="--i:7">7</span><span class="hs-key" style="--i:8">8</span><span class="hs-key" style="--i:9">9</span><span class="hs-key" style="--i:10">0</span><span class="hs-key" style="--i:11">-</span><span class="hs-key" style="--i:12">=</span><span class="hs-key wide" style="--i:13">delete</span></div>
+              <div class="hs-kb-row"><span class="hs-key wide" style="--i:14">tab</span><span class="hs-key" style="--i:15">Q</span><span class="hs-key" style="--i:16">W</span><span class="hs-key" style="--i:17">E</span><span class="hs-key" style="--i:18">R</span><span class="hs-key" style="--i:19">T</span><span class="hs-key" style="--i:20">Y</span><span class="hs-key" style="--i:21">U</span><span class="hs-key" style="--i:22">I</span><span class="hs-key" style="--i:23">O</span><span class="hs-key" style="--i:24">P</span><span class="hs-key" style="--i:25">[</span><span class="hs-key" style="--i:26">]</span><span class="hs-key wide" style="--i:27">\</span></div>
+              <div class="hs-kb-row"><span class="hs-key xwide" style="--i:28">caps</span><span class="hs-key" style="--i:29">A</span><span class="hs-key" style="--i:30">S</span><span class="hs-key" style="--i:31">D</span><span class="hs-key" style="--i:32">F</span><span class="hs-key" style="--i:33">G</span><span class="hs-key" style="--i:34">H</span><span class="hs-key" style="--i:35">J</span><span class="hs-key" style="--i:36">K</span><span class="hs-key" style="--i:37">L</span><span class="hs-key" style="--i:38">;</span><span class="hs-key" style="--i:39">'</span><span class="hs-key xwide" style="--i:40">return</span></div>
+              <div class="hs-kb-row"><span class="hs-key xwide" style="--i:41">shift</span><span class="hs-key" style="--i:42">Z</span><span class="hs-key" style="--i:43">X</span><span class="hs-key" style="--i:44">C</span><span class="hs-key" style="--i:45">V</span><span class="hs-key" style="--i:46">B</span><span class="hs-key" style="--i:47">N</span><span class="hs-key" style="--i:48">M</span><span class="hs-key" style="--i:49">,</span><span class="hs-key" style="--i:50">.</span><span class="hs-key" style="--i:51">/</span><span class="hs-key xwide" style="--i:52">shift</span></div>
+              <div class="hs-kb-row"><span class="hs-key" style="--i:53">fn</span><span class="hs-key wide" style="--i:54">control</span><span class="hs-key wide" style="--i:55">option</span><span class="hs-key hot cmdkey" style="--i:56">&#8984;<span class="hs-cmd-txt">command</span></span><span class="hs-key hot space" style="--i:57"></span><span class="hs-key hot cmdkey" style="--i:58">&#8984;<span class="hs-cmd-txt">command</span></span><span class="hs-key wide" style="--i:59">option</span><span class="hs-key" style="--i:60">&#8592;</span><span class="hs-key" style="--i:61">&#8593;</span><span class="hs-key" style="--i:62">&#8595;</span><span class="hs-key" style="--i:63">&#8594;</span></div>
+            </div>
+            <p class="hs-foot">Tekan <kbd>Ctrl</kbd> + <kbd>K</kbd> atau <kbd>/</kbd> untuk membuka navigasi cepat</p>
+          </div>
+
           <!-- PERKS: full content width, aligned with the dashboard below -->
-          <div class="mt-12 mb-12 pt-8 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-4 text-left">
+          <div id="heroPerks" class="mt-12 mb-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-left">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-lg bg-blue-500/15 text-cyan-400 flex items-center justify-center shrink-0 border border-blue-500/20"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
               <div><p class="text-xs font-bold text-white">100% Hak Milik</p><p class="text-[11px] text-slate-500">Source code &amp; akun milik Anda</p></div>
@@ -525,7 +1423,7 @@
           </div>
 
           <!-- MOCKUP PREVIEW -->
-          <div id="dashboardCard" class="relative mx-auto rounded-2xl bg-ink-900 p-3 sm:p-4 shadow-[0_0_70px_-15px_rgba(59,130,246,0.55)] border border-white/10" style="transition: transform .18s ease-out; will-change: transform;">
+          <div id="dashboardCard" class="relative mx-auto rounded-2xl bg-ink-900 p-3 sm:p-4 shadow-[0_0_70px_-15px_rgba(20,164,115,0.55)] border border-white/10" style="transition: transform .18s ease-out; will-change: transform;">
             <div class="flex items-center justify-between pb-3 px-3 border-b border-white/10 text-slate-400 text-xs">
               <div class="flex items-center space-x-2">
                 <span class="w-3 h-3 rounded-full bg-red-500 block"></span>
@@ -752,14 +1650,14 @@
           </div>
 
           <div class="flex flex-wrap justify-center gap-2 mb-8" id="moduleTabs">
-            <button onclick="switchTab('kasir')" id="tab-kasir" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-[0_0_20px_-5px_rgba(59,130,246,0.7)]"><i data-lucide="store" class="w-4 h-4 inline mr-1"></i> UMKM &amp; Kasir</button>
+            <button onclick="switchTab('kasir')" id="tab-kasir" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-[0_0_20px_-5px_rgba(20,164,115,0.7)]"><i data-lucide="store" class="w-4 h-4 inline mr-1"></i> UMKM &amp; Kasir</button>
             <button onclick="switchTab('booking')" id="tab-booking" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"><i data-lucide="calendar-check" class="w-4 h-4 inline mr-1"></i> Booking</button>
             <button onclick="switchTab('invoice')" id="tab-invoice" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"><i data-lucide="file-check-2" class="w-4 h-4 inline mr-1"></i> Invoice</button>
             <button onclick="switchTab('cv')" id="tab-cv" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"><i data-lucide="user-check" class="w-4 h-4 inline mr-1"></i> CV &amp; Portofolio</button>
             <button onclick="switchTab('org')" id="tab-org" class="tab-btn px-4 py-2.5 rounded-full text-sm font-semibold transition bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/10"><i data-lucide="users" class="w-4 h-4 inline mr-1"></i> Organisasi &amp; LPJ</button>
           </div>
 
-          <div class="bg-ink-900 border border-white/10 rounded-2xl p-6 sm:p-8 shadow-[0_0_50px_-20px_rgba(59,130,246,0.4)]">
+          <div class="bg-ink-900 border border-white/10 rounded-2xl p-6 sm:p-8 shadow-[0_0_50px_-20px_rgba(20,164,115,0.4)]">
             <!-- KASIR -->
             <div id="content-kasir" class="tab-content grid md:grid-cols-2 gap-6 items-center">
               <div>
@@ -875,7 +1773,7 @@
           </div>
 
           <div class="text-center mt-10">
-            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)]">Lihat Biaya Proyek <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(20,164,115,0.7)]">Lihat Biaya Proyek <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
           </div>
         </div>
       </div>
@@ -893,29 +1791,29 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">1</div>
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(20,164,115,0.7)]">1</div>
               <h3 class="font-bold text-white text-base mb-2">Order &amp; Diskusi Kontrak</h3>
               <p class="text-xs text-slate-400 leading-relaxed">Pilih paket atau modul. Kami buatkan draf kesepakatan lingkup kerja (MoU).</p>
             </div>
             <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">2</div>
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(20,164,115,0.7)]">2</div>
               <h3 class="font-bold text-white text-base mb-2">Perencanaan &amp; Desain</h3>
               <p class="text-xs text-slate-400 leading-relaxed">Pilih referensi tampilan. Kami susun struktur halaman dan navigasi sistem.</p>
             </div>
             <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-orange-500/40">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-orange-500 to-red-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(249,115,22,0.7)]">3</div>
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-orange-500 to-red-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(20,164,115,0.7)]">3</div>
               <h3 class="font-bold text-white text-base mb-2">Pengiriman Materi</h3>
               <p class="text-xs text-slate-400 leading-relaxed">Kirimkan logo, profil usaha, atau daftar produk. Tim kami yang input layoutnya.</p>
             </div>
             <div class="lift bg-ink-850 p-6 rounded-xl border border-white/10 hover:border-cyan-500/40">
-              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">4</div>
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-500 text-white font-extrabold flex items-center justify-center mb-4 text-lg shadow-[0_0_18px_-3px_rgba(20,164,115,0.7)]">4</div>
               <h3 class="font-bold text-white text-base mb-2">Publish &amp; Serah Terima</h3>
               <p class="text-xs text-slate-400 leading-relaxed">Website diluncurkan. Seluruh akses login, source code, dan panduan diserahkan.</p>
             </div>
           </div>
 
           <div class="text-center mt-10">
-            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(249,115,22,0.7)]">Lihat Paket &amp; Biaya <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(20,164,115,0.7)]">Lihat Paket &amp; Biaya <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
           </div>
         </div>
       </div>
@@ -953,7 +1851,7 @@
               <a href="https://wa.me/6288983636944?text=Halo%20Juraganweb,%20saya%20tertarik%20Paket%20Starter%20CV%20%26%20Web%20Profil." target="_blank" class="w-full py-3 rounded-full bg-white/5 border border-white/15 text-white font-bold text-xs text-center hover:border-cyan-400/60 hover:text-cyan-300 transition">Pesan Paket Starter</a>
             </div>
 
-            <div class="lift bg-gradient-to-b from-ink-800 to-ink-900 rounded-2xl border-2 border-cyan-500/50 p-6 text-white flex flex-col justify-between shadow-[0_0_50px_-15px_rgba(34,211,238,0.5)] relative">
+            <div class="lift bg-gradient-to-b from-ink-800 to-ink-900 rounded-2xl border-2 border-cyan-500/50 p-6 text-white flex flex-col justify-between shadow-[0_0_50px_-15px_rgba(20,164,115,0.5)] relative">
               <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-red-500 text-white font-extrabold text-[10px] uppercase tracking-wider px-3 py-1 rounded-full shadow-md">Paling Diminati UMKM</div>
               <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-cyan-300 block mb-1">Business &amp; Service</span>
@@ -972,7 +1870,7 @@
                   <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-orange-400 shrink-0"></i> Panduan Penggunaan &amp; Video</li>
                 </ul>
               </div>
-              <a href="https://wa.me/6288983636944?text=Halo%20Juraganweb,%20saya%20tertarik%20Paket%20UMKM%20%26%20Booking%20System." target="_blank" class="w-full py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-bold text-xs text-center transition shadow-[0_0_25px_-5px_rgba(249,115,22,0.8)]">Pesan Paket Business</a>
+              <a href="https://wa.me/6288983636944?text=Halo%20Juraganweb,%20saya%20tertarik%20Paket%20UMKM%20%26%20Booking%20System." target="_blank" class="w-full py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-bold text-xs text-center transition shadow-[0_0_25px_-5px_rgba(20,164,115,0.8)]">Pesan Paket Business</a>
             </div>
 
             <div class="lift bg-ink-900 rounded-2xl border border-white/10 p-6 flex flex-col justify-between hover:border-white/20">
@@ -999,13 +1897,13 @@
 
           <!-- ADD-ON -->
           <div class="mt-10">
-            <div class="bg-ink-850 rounded-xl p-6 sm:p-8 border border-white/10 shadow-[0_0_40px_-20px_rgba(59,130,246,0.4)] flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="bg-ink-850 rounded-xl p-6 sm:p-8 border border-white/10 shadow-[0_0_40px_-20px_rgba(20,164,115,0.4)] flex flex-col md:flex-row items-center justify-between gap-6">
               <div>
                 <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/15 text-cyan-300 text-xs font-bold rounded mb-2 border border-blue-500/20"><i data-lucide="wrench" class="w-3.5 h-3.5"></i> Kontrak Tambahan Opsional</div>
                 <h3 class="text-lg font-bold text-white">Butuh Pemeliharaan Setelah Garansi Habis?</h3>
                 <p class="text-slate-400 text-xs mt-1 max-w-xl">Bisa menandatangani <strong class="text-slate-200">Kontrak Maintenance Terpisah</strong> kapan saja untuk update konten, backup rutin, dan pembaruan fitur tanpa biaya bulanan paksaan.</p>
               </div>
-              <a href="https://wa.me/6288983636944?text=Halo,%20saya%20ingin%20tanya%20layanan%20kontrak%20maintenance." target="_blank" class="px-5 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold shrink-0 transition shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)]">Tanyakan Maintenance</a>
+              <a href="https://wa.me/6288983636944?text=Halo,%20saya%20ingin%20tanya%20layanan%20kontrak%20maintenance." target="_blank" class="px-5 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-bold shrink-0 transition shadow-[0_0_25px_-5px_rgba(20,164,115,0.7)]">Tanyakan Maintenance</a>
             </div>
           </div>
         </div>
@@ -1040,7 +1938,7 @@
           </div>
 
           <div class="text-center mt-10">
-            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)] transition">Lihat Biaya Proyek <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+            <a href="#view-biaya" onclick="navigate('biaya'); return false;" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(20,164,115,0.7)] transition">Lihat Biaya Proyek <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
           </div>
         </div>
       </div>
@@ -1071,7 +1969,7 @@
           </div>
 
           <div class="text-center mt-10">
-            <button onclick="openEstimatorModal()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)]"><i data-lucide="calculator" class="w-4 h-4"></i> Hitung Estimasi Kontrak</button>
+            <button onclick="openEstimatorModal()" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm font-bold shadow-[0_0_25px_-5px_rgba(20,164,115,0.7)]"><i data-lucide="calculator" class="w-4 h-4"></i> Hitung Estimasi Kontrak</button>
           </div>
         </div>
       </div>
@@ -1085,7 +1983,7 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 pb-8 border-b border-white/10 text-xs">
         <div>
           <div class="flex items-center gap-2 mb-4">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center font-bold text-white text-base shadow-[0_0_18px_-3px_rgba(59,130,246,0.7)]">J</div>
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center font-bold text-white text-base shadow-[0_0_18px_-3px_rgba(20,164,115,0.7)]">J</div>
             <span class="font-extrabold text-lg">JURAGAN<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">WEB</span></span>
           </div>
           <p class="text-slate-400 leading-relaxed mb-4">Penyedia jasa pembuatan website &amp; digital system berpengalaman. Membantu UMKM, mahasiswa, dan perusahaan berkembang secara digital.</p>
@@ -1130,7 +2028,7 @@
 
   <!-- MODAL ESTIMATOR -->
   <div id="estimatorModal" class="fixed inset-0 bg-ink-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-ink-900 rounded-2xl max-w-lg w-full p-6 shadow-[0_0_60px_-15px_rgba(59,130,246,0.5)] border border-white/10 relative max-h-[90vh] overflow-y-auto">
+    <div class="bg-ink-900 rounded-2xl max-w-lg w-full p-6 shadow-[0_0_60px_-15px_rgba(20,164,115,0.5)] border border-white/10 relative max-h-[90vh] overflow-y-auto">
       <button onclick="closeEstimatorModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       <div class="mb-4 border-b border-white/10 pb-3">
         <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-wider block">Kalkulator Proyek</span>
@@ -1171,7 +2069,26 @@
         <div><span class="text-slate-300 block">Estimasi Total Biaya Kontrak:</span><span class="text-[11px] text-slate-500">*Beli Putus + Hak Milik 100%</span></div>
         <span id="totalCostDisplay" class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">Rp 700.000</span>
       </div>
-      <button onclick="sendEstimatorWA()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs rounded-full transition flex items-center justify-center gap-2 shadow-[0_0_25px_-5px_rgba(59,130,246,0.7)]"><i data-lucide="message-circle" class="w-4 h-4"></i> Kirim Estimasi ke WhatsApp Juraganweb</button>
+      <button onclick="sendEstimatorWA()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-xs rounded-full transition flex items-center justify-center gap-2 shadow-[0_0_25px_-5px_rgba(20,164,115,0.7)]"><i data-lucide="message-circle" class="w-4 h-4"></i> Kirim Estimasi ke WhatsApp Juraganweb</button>
+    </div>
+  </div>
+
+  <!-- RAYCAST-STYLE COMMAND PALETTE (quick nav + actions) -->
+  <div id="cmdPalette" class="rc-overlay" aria-hidden="true">
+    <div class="rc-backdrop" data-rc-close></div>
+    <div class="rc-window" role="dialog" aria-modal="true" aria-label="Navigasi cepat Juraganweb">
+      <div class="rc-inputrow">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+        <input id="cmdInput" type="text" placeholder="Cari halaman atau aksi..." autocomplete="off" spellcheck="false" aria-label="Cari perintah" />
+        <kbd class="rc-kbd">ESC</kbd>
+      </div>
+      <div id="cmdList" class="rc-list"></div>
+      <div class="rc-foot">
+        <span><kbd class="rc-kbd">&#8593;</kbd><kbd class="rc-kbd">&#8595;</kbd> pilih</span>
+        <span><kbd class="rc-kbd">&#8629;</kbd> buka</span>
+        <span><kbd class="rc-kbd">ESC</kbd> tutup</span>
+        <span class="rc-brand">JURAGANWEB &middot; QUICK NAV</span>
+      </div>
     </div>
   </div>
 
@@ -1229,6 +2146,8 @@
 
     /* ---------- FLOATING BACKGROUND MOTES ---------- */
     (function initMotes() {
+      const bgWrap = document.getElementById('bgLayers');
+      if (bgWrap && getComputedStyle(bgWrap).display === 'none') return;
       const cv = document.getElementById('bgParticles');
       if (!cv || !cv.getContext) return;
       const ctx = cv.getContext('2d');
@@ -1236,10 +2155,10 @@
 
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const COLORS = [
-        'rgba(34,211,238,',  // cyan
-        'rgba(96,165,250,',  // blue
-        'rgba(251,146,60,',  // orange
-        'rgba(226,232,240,', // near-white
+        'rgba(20,164,115,',  // cyan
+        'rgba(116,183,149,',  // blue
+        'rgba(20,164,115,',  // orange
+        'rgba(242,248,244,', // near-white
       ];
       let w = 0, h = 0, dpr = 1, parts = [], raf = null;
 
@@ -1348,13 +2267,13 @@
       document.addEventListener('mouseover', (e) => {
         if (ring && e.target.closest('a, button, input, select, label')) {
           ring.style.width = '34px'; ring.style.height = '34px';
-          ring.style.borderColor = 'rgba(249,115,22,0.9)';
+          ring.style.borderColor = 'rgba(20,164,115,0.9)';
         }
       });
       document.addEventListener('mouseout', (e) => {
         if (ring && e.target.closest('a, button, input, select, label')) {
           ring.style.width = '18px'; ring.style.height = '18px';
-          ring.style.borderColor = 'rgba(34,211,238,0.85)';
+          ring.style.borderColor = 'rgba(20,164,115,0.85)';
         }
       });
 
@@ -1497,6 +2416,7 @@
 
         let blockIdx = 0;
         Array.from(col.children).forEach((block) => {
+          if (block.id === 'heroStage') return;   // owns its own entrance/motion
           if (block.classList.contains('grid')) {
             // a grid reveals its own children so the cards cascade
             Array.from(block.children).forEach((card, i) => {
@@ -1620,7 +2540,7 @@
     function switchTab(tabKey) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-cyan-500', 'text-white', 'shadow-[0_0_20px_-5px_rgba(59,130,246,0.7)]');
+        btn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-cyan-500', 'text-white', 'shadow-[0_0_20px_-5px_rgba(20,164,115,0.7)]');
         btn.classList.add('bg-white/5', 'text-slate-400', 'border', 'border-white/10');
       });
       const c = document.getElementById('content-' + tabKey);
@@ -1628,7 +2548,7 @@
       if (c && b) {
         c.classList.remove('hidden');
         b.classList.remove('bg-white/5', 'text-slate-400', 'border', 'border-white/10');
-        b.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-cyan-500', 'text-white', 'shadow-[0_0_20px_-5px_rgba(59,130,246,0.7)]');
+        b.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-cyan-500', 'text-white', 'shadow-[0_0_20px_-5px_rgba(20,164,115,0.7)]');
       }
     }
 
@@ -1667,6 +2587,251 @@
       const message = 'Halo Juraganweb, saya melakukan simulasi estimasi kontrak pembuatan website:\n\n- Modul Dipilih: ' + list + '\n- Total Estimasi Biaya Kontrak: ' + totalText + '\n\nSaya ingin konsultasi pengerjaan proyek ini.';
       window.open('https://wa.me/6288983636944?text=' + encodeURIComponent(message), '_blank');
     }
+  </script>
+  <script id="raycastCmd">
+    (function () {
+      'use strict';
+      var ICONS = {
+        home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+        grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+        flow:'<rect x="3" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="16" width="7" height="5" rx="1.5"/><path d="M6.5 8v6a2 2 0 0 0 2 2H14"/>',
+        tag:'<path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9-9-9Z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
+        brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+        help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.5v.4"/><path d="M12 17h.01"/>',
+        calc:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h2m4 0h2M8 16h2m4 0h2"/>',
+        wa:'<path d="M4 20l1.4-4A8 8 0 1 1 8 18.6L4 20Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/>'
+      };
+      function svg(k) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[k] + '</svg>'; }
+      var COMMANDS = [
+        { g:'Navigasi', label:'Beranda',            hint:'Ringkasan layanan & demo interaktif', a:'BRD', i:'home',  kw:'home awal hero dashboard',        run:function(){ navigate('home'); } },
+        { g:'Navigasi', label:'Modul Sistem',       hint:'Kasir, booking, invoice, CV digital',   a:'MOD', i:'grid',  kw:'modul fitur sistem kasir stok',   run:function(){ navigate('modul'); } },
+        { g:'Navigasi', label:'Cara Kerja Kontrak', hint:'Alur pengerjaan beli putus',           a:'PRO', i:'flow',  kw:'proses cara kerja kontrak mou',   run:function(){ navigate('proses'); } },
+        { g:'Navigasi', label:'Biaya Proyek',       hint:'Paket Starter, Bisnis, Enterprise',     a:'BYA', i:'tag',   kw:'biaya harga paket estimasi',     run:function(){ navigate('biaya'); } },
+        { g:'Navigasi', label:'Portofolio',         hint:'Contoh hasil pengerjaan',              a:'PTF', i:'brief', kw:'portofolio contoh karya',        run:function(){ navigate('portfolio'); } },
+        { g:'Navigasi', label:'FAQ',                hint:'Pertanyaan yang sering diajukan',      a:'FAQ', i:'help',  kw:'faq tanya jawab garansi',        run:function(){ navigate('faq'); } },
+        { g:'Aksi',     label:'Hitung Estimasi',    hint:'Buka kalkulator biaya kontrak',        a:'EST', i:'calc',  kw:'estimasi kalkulator biaya',      run:function(){ openEstimatorModal(); } },
+        { g:'Aksi',     label:'Konsultasi WhatsApp',hint:'Chat +62 889-8363-6944',              a:'WA',  i:'wa',    kw:'whatsapp chat kontak konsultasi',run:function(){ window.open('https://wa.me/6288983636944','_blank'); } }
+      ];
+
+      var overlay = document.getElementById('cmdPalette');
+      var input   = document.getElementById('cmdInput');
+      var list    = document.getElementById('cmdList');
+      if (!overlay || !input || !list) return;
+
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var isMac  = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+      Array.prototype.forEach.call(document.querySelectorAll('[data-rc-mod]'), function (el) {
+        el.textContent = isMac ? '\u2318K' : 'Ctrl K';
+      });
+
+      var visible = [], sel = 0, lastFocus = null, closeTimer = null;
+
+      function isOpen() { return overlay.classList.contains('rc-open'); }
+
+      function render(q, animate) {
+        var term = (q || '').trim().toLowerCase();
+        visible = COMMANDS.filter(function (c) {
+          return !term || (c.label + ' ' + c.hint + ' ' + c.a + ' ' + c.kw).toLowerCase().indexOf(term) >= 0;
+        });
+        /* Label hits outrank helper-text hits, so "estimasi" opens the
+           calculator instead of the pricing section. Stable sort keeps the
+           original order inside each relevance tier. */
+        if (term) {
+          function score(c) {
+            var L = c.label.toLowerCase();
+            if (L === term) return 0;
+            if (L.indexOf(term) === 0) return 1;
+            if (L.indexOf(term) > 0) return 2;
+            if (c.a.toLowerCase().indexOf(term) >= 0) return 3;
+            return 4;
+          }
+          visible.sort(function (a, b) { return score(a) - score(b); });
+        }
+        if (sel >= visible.length) sel = 0;
+        list.classList.toggle('rc-noanim', !animate);
+        var html = '', lastG = '';
+        visible.forEach(function (c, i) {
+          if (c.g !== lastG) { html += '<div class="rc-group">' + c.g + '</div>'; lastG = c.g; }
+          html += '<button type="button" class="rc-item' + (i === sel ? ' rc-sel' : '') +
+                  '" data-i="' + i + '" style="animation-delay:' + Math.min(i * 28, 220) + 'ms">' +
+                  '<span class="rc-i">' + svg(c.i) + '</span>' +
+                  '<span class="rc-txt"><b>' + c.label + '</b><small>' + c.hint + '</small></span>' +
+                  '<kbd class="rc-kbd">' + c.a + '</kbd></button>';
+        });
+        if (!visible.length) html = '<div class="rc-empty">Tidak ada perintah yang cocok.</div>';
+        list.innerHTML = html;
+        list.scrollTop = 0;
+      }
+
+      function setSel(n) {
+        if (!visible.length) return;
+        var items = Array.prototype.slice.call(list.querySelectorAll('.rc-item'));
+        items.forEach(function (el, i) { el.classList.toggle('rc-sel', i === n); });
+        sel = n;
+        if (items[n]) {
+          var el = items[n], top = el.offsetTop, bottom = top + el.offsetHeight;
+          if (top < list.scrollTop) list.scrollTop = top - 8;
+          else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight + 8;
+        }
+      }
+
+      function openCmd() {
+        if (isOpen()) return;
+        clearTimeout(closeTimer);
+        lastFocus = document.activeElement;
+        overlay.classList.remove('rc-closing');
+        overlay.classList.add('rc-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        input.value = ''; sel = 0;
+        render('', true);
+        setTimeout(function () { input.focus(); }, 10);
+      }
+
+      function finishClose() {
+        overlay.classList.remove('rc-open', 'rc-closing');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      function closeCmd() {
+        if (!isOpen()) return;
+        overlay.classList.add('rc-closing');
+        if (reduce) finishClose();
+        else closeTimer = setTimeout(finishClose, 160);
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      }
+
+      function run(i) {
+        var c = visible[i];
+        if (!c) return;
+        closeCmd();
+        setTimeout(function () { c.run(); }, reduce ? 0 : 90);
+      }
+
+      window.openCmd = openCmd;
+      window.closeCmd = closeCmd;
+
+      input.addEventListener('input', function () { sel = 0; render(input.value, false); });
+      list.addEventListener('click', function (e) {
+        var el = e.target.closest ? e.target.closest('.rc-item') : null;
+        if (el) run(parseInt(el.getAttribute('data-i'), 10));
+      });
+      overlay.addEventListener('mousedown', function (e) {
+        if (e.target.hasAttribute && e.target.hasAttribute('data-rc-close')) closeCmd();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        var k = (e.key || '').toLowerCase();
+        if ((e.metaKey || e.ctrlKey) && k === 'k') {
+          e.preventDefault();
+          if (isOpen()) closeCmd(); else openCmd();
+          return;
+        }
+        if (!isOpen()) {
+          var tag = document.activeElement ? document.activeElement.tagName : '';
+          if (e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(tag)) { e.preventDefault(); openCmd(); }
+          return;
+        }
+        if (k === 'escape') { e.preventDefault(); closeCmd(); }
+        else if (k === 'arrowdown') { e.preventDefault(); setSel((sel + 1) % visible.length); }
+        else if (k === 'arrowup') { e.preventDefault(); setSel((sel - 1 + visible.length) % visible.length); }
+        else if (k === 'enter') { e.preventDefault(); run(sel); }
+      });
+
+      /* floating bar gains a tighter shadow once the page starts scrolling */
+      var header = document.getElementById('siteHeader');
+      if (header) {
+        var ticking = false;
+        function upd() { ticking = false; header.classList.toggle('rc-scrolled', (window.scrollY || 0) > 24); }
+        window.addEventListener('scroll', function () {
+          if (!ticking) { ticking = true; requestAnimationFrame(upd); }
+        }, { passive: true });
+        upd();
+      }
+
+      /* one delegated pointer listener drives every card's soft spotlight */
+      if (!reduce && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        document.addEventListener('mousemove', function (e) {
+          if (!e.target.closest) return;
+          var el = e.target.closest('.rc-window, .lift, .dash-card');
+          if (!el) return;
+          var r = el.getBoundingClientRect();
+          if (!r.width || !r.height) return;
+          el.style.setProperty('--rc-mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+          el.style.setProperty('--rc-my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+        }, { passive: true });
+      }
+
+      render('', false);
+    })();
+  </script>
+  <script id="limeHeroFx">
+  (function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var out = document.getElementById('hsTyped');
+    var caret = document.querySelector('.hs-caret');
+    var phrases = ['Cari modul sistem...', 'Cari biaya proyek...',
+                   'Cari hitung estimasi...', 'Cari portofolio...'];
+    if (out) {
+      if (reduce) {
+        out.textContent = phrases[0];
+        if (caret) caret.style.display = 'none';
+      } else {
+        var pi = 0, ci = 0, deleting = false;
+        function tick() {
+          var p = phrases[pi];
+          out.textContent = p.slice(0, ci);
+          if (!deleting) {
+            ci++;
+            if (ci > p.length) { deleting = true; return setTimeout(tick, 1700); }
+            return setTimeout(tick, 62 + Math.random() * 45);
+          }
+          ci--;
+          if (ci < 0) { deleting = false; ci = 0; pi = (pi + 1) % phrases.length; return setTimeout(tick, 320); }
+          return setTimeout(tick, 28);
+        }
+        setTimeout(tick, 600);
+      }
+    }
+    if (reduce) return;
+
+    var stage = document.getElementById('heroStage');
+    if (!stage) return;
+    var rows = stage.querySelectorAll('.hs-row');
+    var visible = true;
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; },
+                               { threshold: 0 }).observe(stage);
+    }
+    var ri = 0;
+    setInterval(function () {
+      if (!visible || !rows.length) return;
+      for (var j = 0; j < rows.length; j++) rows[j].classList.remove('on');
+      ri = (ri + 1) % rows.length;
+      rows[ri].classList.add('on');
+    }, 2300);
+
+    var beams = stage.querySelector('.hs-beams');
+    var glow = stage.querySelector('.hs-glow');
+    if (!beams) return;
+    var raf = 0;
+    stage.addEventListener('pointermove', function (e) {
+      if (raf) return;
+      raf = requestAnimationFrame(function () {
+        raf = 0;
+        var r = stage.getBoundingClientRect();
+        var dx = (e.clientX - r.left) / r.width - .5;
+        var dy = (e.clientY - r.top) / r.height - .5;
+        beams.style.transform = 'rotate(-34deg) scale(1.8) translate3d(' + (dx * 22).toFixed(1) + 'px,' + (dy * 16).toFixed(1) + 'px,0)';
+        if (glow) glow.style.transform = 'translateX(-50%) translate3d(' + (dx * -26).toFixed(1) + 'px,' + (dy * -14).toFixed(1) + 'px,0)';
+      });
+    });
+    stage.addEventListener('pointerleave', function () {
+      beams.style.transform = '';
+      if (glow) glow.style.transform = '';
+    });
+  })();
   </script>
 </body>
 </html>
