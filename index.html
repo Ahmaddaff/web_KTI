@@ -4578,28 +4578,50 @@
     return txt;
   }
 
-  function callLLM() {
-    var body = {
-      systemInstruction: { parts: [{ text: SYSTEM }] },
-      contents: buildContents(),
-      /* maxOutputTokens harus besar: model Gemini 3.x memakai thinking block
-         (thoughtsTokenCount) yang ikut memakan budget ini. Dengan 440 token,
-         thinking saja menghabiskan ~420 -> jawaban terpotong di tengah kalimat.
-         2000 memberi ruang untuk thinking + jawaban utuh. */
-      generationConfig: { temperature: 0.75, maxOutputTokens: 2000, topP: 0.9 }
-    };
-    var payload = JSON.stringify(body);
+  /* finishReason dari respons Gemini mentah ('MAX_TOKENS' = jawaban terpotong) */
+  function finishReason(data) {
+    var c = data && data.candidates && data.candidates[0];
+    return (c && c.finishReason) || '';
+  }
 
-    /* ===== 1. PROXY (disarankan) =====
-       Serverless function /api/gemini menyimpan API key di server.
-       Dipakai otomatis bila tersedia; bila 404/405 (belum di-deploy)
-       atau network error, lanjut ke panggilan langsung. */
+  /* AbortSignal.timeout bila browser mendukung (Chrome 103+) */
+  function timeoutSignal(ms) {
+    try {
+      if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+        return AbortSignal.timeout(ms);
+      }
+    } catch (e) {}
+    return undefined;
+  }
+
+  function callLLM() {
+    /* ---------------------------------------------------------------
+       Budget token. Model Gemini 3.x memakai THINKING BLOCK yang ikut
+       memakai maxOutputTokens. Dengan 440 token, thinking menghabiskan
+       ~420 sehingga finishReason=MAX_TOKENS dan jawaban terpotong di
+       tengah kalimat (hanya 15 token tersisa). Kita mulai dari 2000
+       dan escalate 2x bila server ternyata melaporkan MAX_TOKENS.
+       --------------------------------------------------------------- */
+    var budget = 2000;
+    var MAX_BUDGET = 8000;
+
+    function buildBody(tok) {
+      return {
+        systemInstruction: { parts: [{ text: SYSTEM }] },
+        contents: buildContents(),
+        generationConfig: { temperature: 0.75, maxOutputTokens: tok, topP: 0.9 }
+      };
+    }
+
     var proxy = proxyUrl();
     var proxyAvailable = proxyEnabled();
-
-    /* ===== 2. LANGSUNG ke Google (fallback) ===== */
     var lastStatus = 0;
-    function tryModel(idx) {
+
+    /* ===== 1. LANGSUNG ke Google (fallback / tanpa proxy) =====
+       Menerima parameter 'attempt' supaya budget bisa dinaikkan
+       ketika server melaporkan jawaban terpotong. */
+    function tryModel(idx, attempt) {
+      attempt = attempt || 0;
       if (idx >= GEMINI_MODELS.length) {
         var e = new Error('all-models-failed');
         e.status = lastStatus;
@@ -4611,7 +4633,8 @@
       return fetch(geminiUrl(model), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: payload
+        body: JSON.stringify(buildBody(budget)),
+        signal: timeoutSignal(90000)
       }).then(function (r) {
         if (!r.ok) {
           return r.text().then(function (t) {
@@ -4629,44 +4652,63 @@
           e2.model = model;
           throw e2;
         }
+        /* jawaban terpotong -> naikkan budget & ulangi (maks 2x) */
+        if (finishReason(data) === 'MAX_TOKENS' && budget < MAX_BUDGET && attempt < 2) {
+          budget = Math.min(budget * 2, MAX_BUDGET);
+          return tryModel(idx, attempt + 1);
+        }
         return txt;
       }).catch(function (err) {
         /* 404 = model deprecated, 429 = kuota habis, 503 = sibuk → coba model berikutnya.
            Catat status terakhir supaya pesan fallback menyebut penyebab sebenarnya. */
         var s = err && err.status;
         if (s) lastStatus = s;
-        if (s === 404 || s === 429 || s === 503 || /network|Failed to fetch/i.test(String(err && err.message))) {
-          return tryModel(idx + 1);
+        if (s === 404 || s === 429 || s === 503 || /network|Failed to fetch|abort/i.test(String(err && err.message))) {
+          return tryModel(idx + 1, 0);
         }
         throw err;
       });
     }
 
-    if (!proxyAvailable) return tryModel(0);
+    /* ===== 2. PROXY (disarankan) =====
+       Serverless function /api/gemini menyimpan API key di server.
+       Dipakai otomatis bila tersedia; bila 404/405 (belum di-deploy)
+       atau network error, lanjut ke panggilan langsung. */
+    if (!proxyAvailable) return tryModel(0, 0);
 
-    return fetch(proxy, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: payload
-    }).then(function (r) {
-      if (!r.ok) {
-        return r.text().then(function (t) {
-          var err = new Error('HTTP ' + r.status + ' ' + t.slice(0, 180));
-          err.status = r.status;
-          throw err;
-        });
-      }
-      return r.json();
-    }).then(function (data) {
-      /* proxy mengembalikan { reply, model } */
-      var txt = String((data && (data.reply || data.text)) || '').trim();
-      if (!txt) throw new Error('empty-proxy');
-      return txt;
-    }).catch(function (err) {
+    function callProxy(attempt) {
+      return fetch(proxy, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(buildBody(budget)),
+        signal: timeoutSignal(90000)
+      }).then(function (r) {
+        if (!r.ok) {
+          return r.text().then(function (t) {
+            var err = new Error('HTTP ' + r.status + ' ' + t.slice(0, 180));
+            err.status = r.status;
+            throw err;
+          });
+        }
+        return r.json();
+      }).then(function (data) {
+        /* proxy mengembalikan { reply, model, finishReason, truncated } */
+        var txt = String((data && (data.reply || data.text)) || '').trim();
+        if (!txt) throw new Error('empty-proxy');
+        /* proxy melaporkan jawaban masih terpotong -> naikkan budget & ulangi */
+        if (data && data.truncated && budget < MAX_BUDGET && attempt < 2) {
+          budget = Math.min(budget * 2, MAX_BUDGET);
+          return callProxy(attempt + 1);
+        }
+        return txt;
+      });
+    }
+
+    return callProxy(0).catch(function (err) {
       /* proxy belum ter-deploy / error → coba langsung ke Google */
       var s = err && err.status;
-      if (s === 404 || s === 405 || s === 501 || /network|Failed to fetch/i.test(String(err && err.message))) {
-        return tryModel(0);
+      if (s === 404 || s === 405 || s === 501 || /network|Failed to fetch|abort/i.test(String(err && err.message))) {
+        return tryModel(0, 0);
       }
       if (s) lastStatus = s;
       throw err;
