@@ -4284,76 +4284,104 @@
   </script>
   <script id="middevAiScript">
   /* ============================================================
-   MID DEV — AI Consultation Widget (v35)
-   Konsultan AI untuk calon klien: melayang di halaman, menjawab kebutuhan
-   bisnis secara kontekstual lalu bisa meneruskan ke WhatsApp
-   Daffa Maulana (Account Manager).
-
-   Semua berjalan di browser (tanpa backend) supaya aman untuk
-   GitHub Pages / Vercel statis.
+   MID DEV — Konsultan AI (LLM Gemini, TANPA template)
+   v38
+   Klien mengobrol bebas dengan AI; jawaban di-generate oleh
+   model Gemini (bukan jawaban template/keyword statis).
+   Bila key belum diisi atau panggilan gagal, widget menjatuhkan
+   diri ke opsi WhatsApp Daffa Maulana agar selalu berguna.
    ============================================================ */
 (function () {
+  'use strict';
+
   var WA = '6288983636944';
 
+  /* ====== ISI API KEY GEMINI ANDA DI SINI ======
+     Dapatkan gratis: https://aistudio.google.com/apikey
+     CATATAN KEAMANAN: key di sini terlihat publik bila repo publik.
+     Untuk produksi, gunakan Vercel serverless function (lihat README),
+     jangan taruh key di client. Anda juga bisa meng-override lewat
+     window.MIDDEV_GEMINI_KEY sebelum script dimuat. */
+  var GEMINI_API_KEY_CONST = '';
+  var GEMINI_MODEL = 'gemini-2.0-flash';
+  /* baca key dinamis: cek window.MIDDEV_GEMINI_KEY dulu, lalu konstanta.
+     Dibaca saat callLLM dipanggil, bukan saat IIFE load, agar override
+     window.MIDDEV_GEMINI_KEY dapat diterima bahkan setelah reload. */
+  function getKey() {
+    return (typeof window !== 'undefined' && window.MIDDEV_GEMINI_KEY)
+      ? String(window.MIDDEV_GEMINI_KEY)
+      : GEMINI_API_KEY_CONST;
+  }
+  function geminiUrl() {
+    return 'https://generativelanguage.googleapis.com/v1beta/models/'
+      + GEMINI_MODEL + ':generateContent?key=' + encodeURIComponent(getKey());
+  }
+
+  var SYSTEM = [
+    'Anda adalah "Konsultan AI MID DEV", asisten virtual untuk calon klien sebuah agency jasa pembuatan website & software sistem dengan skema kontrak BELI PUTUS (sekali bayar, tanpa langganan bulanan).',
+    'Tugas Anda: menjawab pertanyaan calon klien secara ramah, natural, dan informatif dalam Bahasa Indonesia — seperti konsultan manusia yang berpengalaman, BUKAN robot yang membacakan template atau daftar nomor.',
+    'Fakta akurat tentang MID DEV:',
+    '- Paket: Starter Rp 450.000 (website company profile / portofolio CV), Business Rp 1.250.000 (UMKM: sistem Kasir & Stok + Booking/Reservasi), Enterprise Rp 2.800.000 (sistem custom / all-in-one).',
+    '- Semua sekali bayar (beli putus); source code, akun, dan dokumentasi diserahkan ke klien. Tidak ada biaya langganan bulanan.',
+    '- Pembayaran via QRIS (merchant PANDA COMPUTER, NMID ID1025404348167).',
+    '- Account Manager: Daffa Maulana Akhmad M, WhatsApp +62 889-8363-6944.',
+    '- Modul yang tersedia: Kasir & Stok UMKM, Booking / Reservasi, Website Company Profile, E-Commerce / Toko Online, Sistem Internal / Administrasi.',
+    'Cara menjawab:',
+    '- Sesuaikan rekomendasi paket & modul dengan kebutuhan yang diceritakan klien; jangan asumsikan.',
+    '- Bila klien sudah siap, arahkan ia menekan tombol "Kirim ringkasan ke WhatsApp Daffa Maulana" yang tersedia di panel ini.',
+    '- Bila informasi kurang, ajukan pertanyaan balik yang relevan.',
+    '- Tulis seperti obrolan chat manusia: sopan, ringkas, tidak kaku. Hindari format bernomor yang kaku kecuali benar-benar membantu.',
+    '- Selalu membantu dan jujur; bila di luar ranah MID DEV, arahkan ke WhatsApp tim.'
+  ].join('\n');
+
   var SUGGESTIONS = [
-    { label: 'Kasir & Stok',            value: 'kasir' },
-    { label: 'Booking / Reservasi',    value: 'booking' },
-    { label: 'Website Profil Perusahaan',  value: 'company' },
-    { label: 'E-Commerce / Jualan',     value: 'ecommerce' },
-    { label: 'Sistem Internal',         value: 'internal' },
-    { label: 'Belum yakin',             value: 'unsure' }
+    { label: 'Kasir & Stok UMKM',        value: 'kasir' },
+    { label: 'Booking / Reservasi',      value: 'booking' },
+    { label: 'Website Perusahaan',       value: 'company' },
+    { label: 'Toko Online / E-Commerce', value: 'ecommerce' },
+    { label: 'Sistem Internal',          value: 'internal' },
+    { label: 'Belum yakin',              value: 'unsure' }
   ];
-
-  var FAQ = [
-    { k: ['harga', 'biaya', 'berapa', 'paket'],        a: 'Paket dimulai Rp 450.000 (Starter), Rp 1.250.000 (Business, paling diminati UMKM), dan Rp 2.800.000 (Enterprise). Semua sekali bayar — tidak ada biaya langganan bulanan.' },
-    { k: ['lama', 'durasi', 'kapan', 'berapa hari'],  a: 'Umumnya 1–3 minggu tergantung kompleksitas. Website company profile bisa 5–7 hari, sedangkan sistem kasir dengan integrasi butuh waktu lebih.' },
-    { k: ['beli putus', 'langganan', 'abonnement'],   a: 'Ya, skema kontrak beli putus. Source code, akun, dan dokumentasi serah-terima ke Anda, jadi tidak ada tagihan bulanan setelah proyek selesai.' },
-    { k: ['garansi', 'support', 'after sales'],       a: 'Ada garansi awal untuk perbaikan bug, dan pendampingan sampai tim Anda bisa menjalankan sistemnya sendiri.' },
-    { k: ['revisi', 'perubahan'],                     a: 'Ada tahap revisi yang sudah disepakati di awal kontrak. Perubahan di luar lingkup kerja dihitung terpisah dan dikomunikasikan dulu.' },
-    { k: ['pembayaran', 'bayar', 'qris', 'dp'],       a: 'Pembayaran lewat QRIS (PANDA COMPUTER, NMID ID1025404348167). Alur: pilih paket, isi data pemesan, konfirmasi pembayaran, lalu rekap otomatis masuk ke WhatsApp kami.' },
-    { k: ['teknologi', 'stack', 'bahasa', 'code'],    a: 'Web modern yang responsif — bisa berupa landing page company profile, sistem kasir UMKM, atau sistem booking. Semua handover berupa source code.' },
-    { k: ['mulai', 'cara order', 'registrasi', 'daftar'], a: 'Mulai dari section Pendaftaran: pilih paket, isi data, pilih kebutuhan, cek ringkasan, lalu scan QRIS. Selesai — tim kami langsung menghubungi Anda.' }
-  ];
-
-  var MODUL = {
-    kasir:      { label: 'Sistem Kasir & Stok UMKM', icon: 'shopping-cart' },
-    booking:    { label: 'Booking / Reservasi',       icon: 'calendar-days' },
-    company:    { label: 'Website Company Profile',  icon: 'building-2' },
-    ecommerce:  { label: 'E-Commerce / Jualan Online', icon: 'shopping-bag' },
-    internal:   { label: 'Sistem Internal / Administrasi', icon: 'clipboard-list' },
-    unsure:     { label: 'Konsultasi Awal',           icon: 'messages-square' }
+  var MODUL_LABEL = {
+    kasir: 'Sistem Kasir & Stok UMKM', booking: 'Booking / Reservasi',
+    company: 'Website Company Profile', ecommerce: 'E-Commerce / Jualan Online',
+    internal: 'Sistem Internal / Administrasi', unsure: 'Konsultasi Awal'
   };
 
-  var DOM = null;
+  var QUICK = [
+    { q: 'Bisa jelaskan kisaran biayanya untuk usaha saya?', label: '💰 Berapa biayanya?' },
+    { q: 'Berapa lama biasanya pengerjaan sampai selesai?',  label: '⏱️ Berapa lama?' },
+    { q: 'Apakah bisa custom fitur sesuai kebutuhan saya?',  label: '⚙️ Bisa custom?' }
+  ];
 
+  var DOM = null;
+  var A = { open: false, msgs: [], picks: [], asked: false, hasUser: false };
+
+  /* ---------- DOM helpers ---------- */
   function el(tag, cls, html) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
     if (html != null) n.innerHTML = html;
     return n;
   }
-
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
-
   function now() {
-    try {
-      return new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-    } catch (e) { return new Date().toLocaleString('id-ID'); }
+    try { return new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+    catch (e) { return new Date().toLocaleString('id-ID'); }
   }
 
-  /* ---------- state ---------- */
-  var A = { open: false, msgs: [], picks: [], asked: false, done: false };
-
-  /* ---------- riwayat ---------- */
+  /* ---------- persistensi ---------- */
   function persist() {
-    try { localStorage.setItem('middev_ai_v1', JSON.stringify({ msgs: A.msgs, picks: A.picks, asked: A.asked, done: A.done })); } catch (e) {}
+    try { localStorage.setItem('middev_ai_v1', JSON.stringify({ msgs: A.msgs, picks: A.picks, asked: A.asked, hasUser: A.hasUser })); } catch (e) {}
   }
   function restore() {
     try {
       var s = JSON.parse(localStorage.getItem('middev_ai_v1') || 'null');
-      if (s && Array.isArray(s.msgs)) { A.msgs = s.msgs; A.picks = s.picks || []; A.asked = !!s.asked; A.done = !!s.done; }
+      if (s && Array.isArray(s.msgs)) {
+        A.msgs = s.msgs; A.picks = s.picks || []; A.asked = !!s.asked; A.hasUser = !!s.hasUser;
+      }
     } catch (e) {}
   }
 
@@ -4364,6 +4392,17 @@
     return b;
   }
 
+  function stepPanel() {
+    var wrap = el('div', 'ai-sugg');
+    SUGGESTIONS.forEach(function (s) {
+      var b = el('button', 'ai-chip', esc(s.label));
+      b.type = 'button';
+      b.setAttribute('data-ai-pick', s.value);
+      wrap.appendChild(b);
+    });
+    return wrap;
+  }
+
   function render() {
     var list = DOM.list;
     list.innerHTML = '';
@@ -4371,13 +4410,13 @@
       var node = bubble(m.role, m.text, m.extra);
       if (m.kind === 'sugg') {
         var host = node.querySelector('.ai-bubble');
-        host.innerHTML = '<span class="ai-hint">Pilih satu, boleh lebih dari satu</span>';
+        host.innerHTML = '<span class="ai-hint">Pilih salah satu agar saya bisa merekomendasikan modul & paket:</span>';
         host.appendChild(stepPanel());
       }
       list.appendChild(node);
     });
-    /* tombol handoff WhatsApp selalu tersedia di akhir (tidak hilang saat re-render) */
-    if (A.picks.length) {
+    /* tombol handoff WhatsApp selalu tersedia setelah ada percakapan */
+    if (A.hasUser) {
       var wa = el('div', 'ai-msg ai-msg-ai');
       var bub = el('div', 'ai-bubble ai-bubble-plain');
       bub.appendChild(waButton());
@@ -4390,104 +4429,115 @@
     }
   }
 
-  function push(role, text, extra, delay) {
-    var item = { role: role, text: text, extra: extra || '' };
+  function push(role, text) {
+    var item = { role: role, text: text || '' };
     A.msgs.push(item);
     persist();
     render();
-    if (role === 'ai') {
-      var last = DOM.list.lastElementChild;
-      if (last) last.classList.add('is-typing');
-    }
     return item;
   }
 
-  /* ---------- jawaban AI ---------- */
-  function findAnswer(q) {
-    var s = q.toLowerCase();
-    var best = null, bestScore = 0;
-    FAQ.forEach(function (f) {
-      var score = 0;
-      f.k.forEach(function (kw) { if (s.indexOf(kw) !== -1) score++; });
-      if (score > bestScore) { bestScore = score; best = f; }
+  /* ---------- panggilan Gemini (real LLM) ---------- */
+  function buildContents() {
+    // kirim seluruh percakapan (tanpa pesan sapaan/kind khusus) bergantian user/model
+    var conv = A.msgs.filter(function (m) { return m.role === 'user' || m.role === 'ai'; });
+    var out = [];
+    conv.forEach(function (m) {
+      var last = out[out.length - 1];
+      var role = m.role === 'user' ? 'user' : 'model';
+      if (last && last.role === role) {
+        // gabungkan bila berturut-turut (jarang terjadi) agar valid
+        last.parts[0].text += '\n' + m.text;
+      } else {
+        out.push({ role: role, parts: [{ text: m.text }] });
+      }
     });
-    return bestScore > 0 ? best.a : null;
+    // Gemini wajib dimulai dengan user
+    if (out.length && out[0].role !== 'user') out.shift();
+    return out;
   }
 
-  function answer(q) {
-    var direct = findAnswer(q);
-    if (direct) return direct;
-
-    var s = q.toLowerCase();
-    if (s.indexOf('kasir') !== -1 || s.indexOf('stok') !== -1 || s.indexOf('umkm') !== -1) {
-      return 'Untuk UMKM, kami sarankan modul Kasir & Stok: pencatatan transaksi, stok barang, dan laporan penjualan. Paket Business Rp 1.250.000 sudah termasuk modul ini.';
-    }
-    if (s.indexOf('booking') !== -1 || s.indexOf('reservasi') !== -1 || s.indexOf('jadwal') !== -1) {
-      return 'Modul Booking / Reservasi cocok untuk studio, klinik, atau jasa yang butuh managing slot waktu tanpa double booking. Modul ini ada di paket Business dan Enterprise.';
-    }
-    if (s.indexOf('toko') !== -1 || s.indexOf('jualan') !== -1 || s.indexOf('ecommerce') !== -1 || s.indexOf('onlin') !== -1) {
-      return 'Untuk jualan online, kami bisa bangun katalog produk + checkout + dashboard stok. Modul E-Commerce atau Kasir & Stok bisa digabung, tergantung alur transaksi Anda.';
-    }
-    if (s.indexOf('profil') !== -1 || s.indexOf('company') !== -1 || s.indexOf('company profile') !== -1 || s.indexOf('perusahaan') !== -1) {
-      return 'Website company profile adalah pilihan paling cepat dan ringan: halaman perusahaan yang rapi, bisa di-hosting gratis, dan selesai sekitar 5–7 hari. Paket Starter Rp 450.000 sudah cukup untuk kebutuhan ini.';
-    }
-    if (s.indexOf('admin') !== -1 || s.indexOf('internal') !== -1 || s.indexOf('absen') !== -1 || s.indexOf('surat') !== -1) {
-      return 'Untuk sistem internal/administrasi, Enterprise Rp 2.800.000 paling pas karena dapat modul khusus seperti data karyawan, surat menyurat, dan approval. Scope-nya ditentukan setelah konsultasi.';
-    }
-    if (s.indexOf('ai') !== -1 || s.indexOf('chatbot') !== -1 || s.indexOf('chat bot') !== -1) {
-      return 'Bisa. Kami bisa menambah fitur asisten AI atau chat konsultasi di website Anda — mulai dari yang berbasis FAQ/konten sampai yang terhubung ke model AI untuk menjawab pertanyaan visitor secara otomatis. Scope dan biayanya bergantung kompleksitas integrasi.';
-    }
-    if (s.indexOf('gratis') !== -1 || s.indexOf('consul') !== -1 || s.indexOf('konsul') !== -1) {
-      return 'Konsultasi awal memang gratis dan tanpa bindi. Isi kebutuhan bisnis Anda lewat form Pendaftaran, atau langsung hubungi WhatsApp kami untuk obrolan singkat.';
-    }
-    return 'Bqan — saya buatkan ringkasan kebutuhan Anda dulu, lalu tim kami hubungi lewat WhatsApp. Coba pilih salah satu topik di bawah agar saya bisa bantu lebih tepat.';
-  }
-
-  /* ---------- langkah pemandu ---------- */
-  function stepPanel() {
-    var wrap = el('div', 'ai-sugg');
-    SUGGESTIONS.forEach(function (s) {
-      var b = el('button', 'ai-chip', esc(s.label));
-      b.type = 'button';
-      b.setAttribute('data-ai-pick', s.value);
-      wrap.appendChild(b);
+  function callLLM() {
+    var key = getKey();
+    if (!key) return Promise.reject(new Error('no-key'));
+    var body = {
+      systemInstruction: { parts: [{ text: SYSTEM }] },
+      contents: buildContents(),
+      generationConfig: { temperature: 0.75, maxOutputTokens: 440, topP: 0.9 }
+    };
+    return fetch(geminiUrl(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (!r.ok) {
+        return r.text().then(function (t) { throw new Error('HTTP ' + r.status + ' ' + t.slice(0, 180)); });
+      }
+      return r.json();
+    }).then(function (data) {
+      var c = data && data.candidates && data.candidates[0];
+      var txt = c && c.content && c.content.parts && c.content.parts[0] && c.content.parts[0].text;
+      if (!txt) throw new Error('empty-or-blocked');
+      return txt.trim();
     });
-    return wrap;
   }
 
-  function onPick(v) {
-    if (v === 'unsure') {
-      if (A.picks.indexOf('unsure') === -1) A.picks.push('unsure');
-      push('user', 'Belum yakin, tolong bantu saya tentukan.');
-      push('ai', 'Tidak masalah. Ceritakan singkat jenis usaha dan sistem yang Anda butuhkan sekarang — nanti saya bantu pilihkan modul yang paling masuk akal.');
+  function addTyping() {
+    var b = el('div', 'ai-msg ai-msg-ai is-typing');
+    b.innerHTML = '<div class="ai-bubble"></div>';
+    DOM.list.appendChild(b);
+    DOM.list.scrollTop = DOM.list.scrollHeight;
+    return b;
+  }
+
+  /* ---------- kirim pesan user ---------- */
+  function send(text) {
+    var t = (text || '').trim();
+    if (!t) return;
+    if (!A.hasUser) { A.hasUser = true; }
+    push('user', esc(t));
+    DOM.input.value = '';
+    DOM.send.disabled = true;
+    var typing = addTyping();
+    callLLM().then(function (reply) {
+      typing.remove();
+      push('ai', esc(reply));
+      DOM.send.disabled = false;
       DOM.input.focus();
-      return;
-    }
-    if (A.picks.indexOf(v) === -1) A.picks.push(v);
-    var m = MODUL[v];
-    push('user', 'Modul: ' + m.label);
-    var reply = 'Siap. ' + m.label + ' adalah pilihan yang kuat untuk Anda.';
-    if (A.picks.length === 1) {
-      reply += ' Paket yang paling umum untuk kebutuhan ini adalah <strong>Business Rp 1.250.000</strong> (bisa naik ke Enterprise bila ada modul tambahan).';
-    } else {
-      reply += ' Kombinasi modul ini butuh paket <strong>Enterprise Rp 2.800.000</strong> supaya semuanya masuk satu sistem.';
-    }
-    push('ai', reply + ' Mau lanjut ke rekap atau ada pertanyaan lain dulu?');
-    persist();
+      maybeOfferModul();
+    }).catch(function (err) {
+      typing.remove();
+      var key = getKey();
+      var msg = key
+        ? 'Maaf, layanan AI sedang tidak dapat dihubungi. ' + (String(err.message || '').indexOf('429') >= 0 ? 'Kuota mungkin terbatas. ' : '') + 'Coba lagi nanti, atau langsung chat WhatsApp Daffa Maulana ya.'
+        : 'Fitur Konsultan AI perlu diaktifkan (API key Gemini belum diisi). Sementara itu, langsung chat WhatsApp Daffa Maulana saja ya.';
+      push('ai', msg);
+      DOM.send.disabled = false;
+      DOM.input.focus();
+    });
   }
 
-  function askModul() {
+  function maybeOfferModul() {
     if (A.asked) return;
     A.asked = true;
     persist();
-    push('ai', 'Baik, biar saya cek kecocokannya. Kebutuhan bisnis Anda lebih ke yang mana?');
     var item = { role: 'ai', text: '', extra: '', kind: 'sugg' };
     A.msgs.push(item);
     persist();
     render();
   }
 
-  /* delegasi klik chip modul (robust terhadap re-render) */
+  /* ---------- pilihan modul (dikirim ke LLM, bukan template) ---------- */
+  function onPick(v) {
+    var label = MODUL_LABEL[v] || v;
+    if (A.picks.indexOf(v) < 0) { A.picks.push(v); persist(); }
+    if (v === 'unsure') {
+      send('Sebenarnya saya belum yakin perlu modul apa. Bisa bantu saya tentukan dari jenis usaha saya nanti.');
+      return;
+    }
+    send('Saya tertarik dengan modul ' + label + '. Bisa dijelaskan dan direkomendasikan paket yang paling cocok untuk saya?');
+  }
+
   document.addEventListener('click', function (e) {
     var btn = e.target.closest ? e.target.closest('[data-ai-pick]') : null;
     if (!btn) return;
@@ -4500,20 +4550,21 @@
     L.push('*HASIL KONSULTASI AI — MID DEV*');
     L.push('Waktu: ' + now());
     L.push('');
-    L.push('*Kebutuhan Diminta*');
+    L.push('*Modul yang diminati*');
     if (A.picks.length) {
-      A.picks.forEach(function (p) { L.push('• ' + (MODUL[p] ? MODUL[p].label : p)); });
+      A.picks.forEach(function (p) { L.push('• ' + (MODUL_LABEL[p] || p)); });
     } else {
-      L.push('• (belum dipilih)');
+      L.push('• (belum dipilih lewat panduan)');
     }
-    var q = A.msgs.filter(function (m) { return m.role === 'user'; }).map(function (m) { return m.text; });
+    var q = A.msgs.filter(function (m) { return m.role === 'user'; })
+      .map(function (m) { return m.text; })
+      .filter(function (t) { return !/Saya tertarik dengan modul/.test(t); });
     if (q.length) {
       L.push('');
-      L.push('*Pertanyaan Klien*');
+      L.push('*Pertanyaan & kebutuhan klien*');
       q.forEach(function (t) { L.push('• ' + t); });
     }
     L.push('');
-    L.push('Rekomendasi: Enterprise Rp 2.800.000 / Business Rp 1.250.000 / Starter Rp 450.000 — disesuaikan kebutuhan.');
     L.push('Mohon dicek & ditindaklanjuti. Terima kasih.');
     return L.join('\n');
   }
@@ -4523,14 +4574,13 @@
     window.open(url, '_blank', 'noopener');
   }
 
-  /* tombol "Kirim ringkasan ke WhatsApp" */
   function waButton() {
     var b = el('button', 'ai-wa-btn');
     b.type = 'button';
     b.innerHTML = '<i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Kirim ringkasan ke WhatsApp Daffa Maulana';
     b.addEventListener('click', function () {
       sendWA();
-      push('ai', 'Ringkasan sudah dikirim ke WhatsApp <strong>Daffa Maulana</strong> (Account Manager). Tim kami akan menghubungi Anda.');
+      push('ai', 'Ringkasan sudah dikirim ke WhatsApp <strong>Daffa Maulana</strong> (Account Manager). Tim kami akan segera menghubungi Anda.');
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         try { window.lucide.createIcons(); } catch (e) {}
       }
@@ -4538,23 +4588,7 @@
     return b;
   }
 
-  /* ---------- kirim pesan user ---------- */
-  function send(text) {
-    var t = (text || '').trim();
-    if (!t) return;
-    push('user', esc(t));
-    DOM.input.value = '';
-    DOM.send.disabled = true;
-    var ans = answer(t);
-    setTimeout(function () {
-      push('ai', ans);
-      DOM.send.disabled = false;
-      DOM.input.focus();
-      if (!A.asked) askModul();
-    }, 420);
-  }
-
-  /* ---------- buat widget ---------- */
+  /* ---------- bangun widget ---------- */
   function build() {
     var fab = el('button', 'ai-fab');
     fab.type = 'button';
@@ -4569,21 +4603,19 @@
       '<div class="ai-head">' +
         '<div class="ai-head-l">' +
           '<span class="ai-avatar"><i data-lucide="bot" class="w-4 h-4"></i></span>' +
-          '<div><strong>Konsultan AI MID DEV</strong><span class="ai-status"><span class="ai-dot"></span>Online · balas otomatis</span></div>' +
+          '<div><strong>Konsultan AI MID DEV</strong><span class="ai-status"><span class="ai-dot"></span>Online · dikelola AI</span></div>' +
         '</div>' +
         '<button type="button" class="ai-x" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button>' +
       '</div>' +
       '<div class="ai-list" id="aiList"></div>' +
       '<div class="ai-quick" id="aiQuick">' +
-        '<button type="button" data-ai-q="Berapa biayanya?">💰 Berapa biayanya?</button>' +
-        '<button type="button" data-ai-q="Berapa lama pengerjaannya?">⏱️ Berapa lama pengerjaannya?</button>' +
-        '<button type="button" data-ai-q="Bisa customize fitur?">⚙️ Bisa custom fitur?</button>' +
+        QUICK.map(function (q) { return '<button type="button" data-ai-q="' + esc(q.q) + '">' + esc(q.label) + '</button>'; }).join('') +
       '</div>' +
       '<form class="ai-input" id="aiForm">' +
         '<input type="text" id="aiInput" placeholder="Tulis kebutuhan Anda…" autocomplete="off" aria-label="Pesan untuk konsultan AI">' +
         '<button type="submit" class="ai-send" id="aiSend" aria-label="Kirim"><i data-lucide="send" class="w-4 h-4"></i></button>' +
       '</form>' +
-      '<div class="ai-foot"><i data-lucide="shield-check" class="w-3 h-3"></i> Sesi ini tersimpan di browser Anda saja. Untuk manusia, WhatsApp Daffa Maulana.</div>';
+      '<div class="ai-foot"><i data-lucide="shield-check" class="w-3 h-3"></i> Sesi ini tersimpan di browser Anda. Untuk manusia, WhatsApp Daffa Maulana.</div>';
 
     var wrap = el('div', 'ai-wrap');
     wrap.appendChild(panel);
@@ -4597,21 +4629,13 @@
     };
 
     panel.querySelector('.ai-x').addEventListener('click', function () { toggle(false); });
-
-    DOM.form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      send(DOM.input.value);
-    });
-
+    DOM.form.addEventListener('submit', function (e) { e.preventDefault(); send(DOM.input.value); });
     DOM.quick.addEventListener('click', function (e) {
       var b = e.target.closest('[data-ai-q]');
       if (!b) return;
       send(b.getAttribute('data-ai-q'));
     });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && A.open) toggle(false);
-    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && A.open) toggle(false); });
   }
 
   function toggle(open) {
@@ -4620,20 +4644,16 @@
     DOM.fab.setAttribute('aria-expanded', open ? 'true' : 'false');
     if (open) {
       if (!A.msgs.length) {
-        push('ai', 'Halo! Saya <strong>Konsultan AI MID DEV</strong>. Tanyakan apa saja soal website atau sistem untuk bisnis Anda — harga, durasi, paket, sampai modul yang cocok.');
-        push('ai', '<span class="ai-hint">Atau pilih salah satu pertanyaan cepat di bawah</span>');
+        push('ai', 'Halo! Saya <strong>Konsultan AI MID DEV</strong>. Ceritakan saja kebutuhan website atau sistem bisnis Anda — saya bantu jelaskan dan merekomendasikan solusinya.');
       }
       setTimeout(function () { DOM.input.focus(); }, 260);
     }
   }
 
-  /* API global (dipakai dari command palette & tombol lain) */
+  /* API global */
   window.aiOpen = function () { toggle(true); };
   window.aiClose = function () { toggle(false); };
-  window.aiAsk = function (q) {
-    toggle(true);
-    if (q) send(q);
-  };
+  window.aiAsk = function (q) { toggle(true); if (q) send(q); };
 
   /* ---------- init ---------- */
   function init() {
