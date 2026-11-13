@@ -1893,10 +1893,12 @@
     body .ai-wrap.is-open .ai-fab-txt { display:none; }
     body .ai-wrap.is-open .ai-fab { width:48px; padding:0; justify-content:center; }
     body .ai-wrap.is-open .ai-fab svg { transition:transform .25s ease; }
+    /* saat panel terbuka, tombol tetap di bawah panel — pastikan tidak menimpa header */
+    body .ai-wrap.is-open .ai-fab { flex:0 0 auto; }
 
     /* panel chat */
     body .ai-panel {
-      width:376px; max-width:calc(100vw - 32px); height:min(560px, calc(100vh - 120px));
+      width:376px; max-width:calc(100vw - 32px); height:min(560px, calc(100vh - 190px));
       background:#FFFFFF; border:1px solid rgba(16,16,19,.10); border-radius:20px;
       box-shadow:0 26px 64px -22px rgba(16,16,19,.38); display:flex; flex-direction:column;
       overflow:hidden; opacity:0; transform:translateY(14px) scale(.97); pointer-events:none;
@@ -4296,14 +4298,20 @@
 
   var WA = '6288983636944';
 
-  /* ====== ISI API KEY GEMINI ANDA DI SINI ======
+  /* ====== API KEY GEMINI ======
      Dapatkan gratis: https://aistudio.google.com/apikey
      CATATAN KEAMANAN: key di sini terlihat publik bila repo publik.
      Untuk produksi, gunakan Vercel serverless function (lihat README),
      jangan taruh key di client. Anda juga bisa meng-override lewat
      window.MIDDEV_GEMINI_KEY sebelum script dimuat. */
+  /* Proxy Vercel (disarankan): API key disimpan di environment variable
+     Vercel, TIDAK di HTML. Setel window.MIDDEV_AI_PROXY = '' untuk paksa
+     panggilan langsung ke Google (key harus diisi di GEMINI_API_KEY_CONST). */
   var GEMINI_API_KEY_CONST = '';
-  var GEMINI_MODEL = 'gemini-2.0-flash';
+  /* Fallback chain model. Gemini 2.0-flash & 2.5-flash sudah deprecated
+     ("no longer available"), jadi urut dari yang paling stabil.
+     Bila model pertama kena 404/503, otomatis coba yang berikutnya. */
+  var GEMINI_MODELS = ['gemini-3.5-flash', 'gemini-3.8-flash', 'gemini-3-flash-preview'];
   /* baca key dinamis: cek window.MIDDEV_GEMINI_KEY dulu, lalu konstanta.
      Dibaca saat callLLM dipanggil, bukan saat IIFE load, agar override
      window.MIDDEV_GEMINI_KEY dapat diterima bahkan setelah reload. */
@@ -4312,9 +4320,21 @@
       ? String(window.MIDDEV_GEMINI_KEY)
       : GEMINI_API_KEY_CONST;
   }
-  function geminiUrl() {
+  function geminiUrl(model) {
     return 'https://generativelanguage.googleapis.com/v1beta/models/'
-      + GEMINI_MODEL + ':generateContent?key=' + encodeURIComponent(getKey());
+      + model + ':generateContent?key=' + encodeURIComponent(getKey());
+  }
+  /* endpoint proxy (serverless) — dipakai bila tersedia */
+  function proxyUrl() {
+    return (typeof window !== 'undefined' && window.MIDDEV_AI_PROXY)
+      ? String(window.MIDDEV_AI_PROXY)
+      : '/api/gemini';
+  }
+  /* proxy dianggap tersedia bila endpoint-nya diarahkan eksplisit
+     (window.MIDDEV_AI_PROXY) atau standarnya /api/gemini */
+  function proxyEnabled() {
+    var p = proxyUrl();
+    return !!(p && p !== '/api/gemini-disabled');
   }
 
   var SYSTEM = [
@@ -4327,7 +4347,9 @@
     '- Account Manager: Daffa Maulana Akhmad M, WhatsApp +62 889-8363-6944.',
     '- Modul yang tersedia: Kasir & Stok UMKM, Booking / Reservasi, Website Company Profile, E-Commerce / Toko Online, Sistem Internal / Administrasi.',
     'Cara menjawab:',
+    '- WAJIB menjawab dalam Bahasa Indonesia, gunakan huruf Latin/ASCII. Jangan pernah menjawab dalam bahasa Inggris atau huruf Mandarin.',
     '- Sesuaikan rekomendasi paket & modul dengan kebutuhan yang diceritakan klien; jangan asumsikan.',
+    '- Selalu sebutkan paket yang cocok beserta harganya (mis. Paket Business Rp 1.250.000) bila klien menanyakan sistem atau biaya.',
     '- Bila klien sudah siap, arahkan ia menekan tombol "Kirim ringkasan ke WhatsApp Daffa Maulana" yang tersedia di panel ini.',
     '- Bila informasi kurang, ajukan pertanyaan balik yang relevan.',
     '- Tulis seperti obrolan chat manusia: sopan, ringkas, tidak kaku. Hindari format bernomor yang kaku kecuali benar-benar membantu.',
@@ -4389,6 +4411,9 @@
   function bubble(role, text, extra) {
     var b = el('div', 'ai-msg ai-msg-' + role);
     b.innerHTML = '<div class="ai-bubble">' + (text || '') + '</div>' + (extra || '');
+    /* tandai jenis bubble agar mudah diseleksi (test/analitik):
+       data-ai-kind = greeting | answer | sugg | user */
+    b.setAttribute('data-ai-kind', 'bubble');
     return b;
   }
 
@@ -4406,18 +4431,26 @@
   function render() {
     var list = DOM.list;
     list.innerHTML = '';
-    A.msgs.forEach(function (m) {
+    A.msgs.forEach(function (m, idx) {
       var node = bubble(m.role, m.text, m.extra);
       if (m.kind === 'sugg') {
         var host = node.querySelector('.ai-bubble');
         host.innerHTML = '<span class="ai-hint">Pilih salah satu agar saya bisa merekomendasikan modul & paket:</span>';
         host.appendChild(stepPanel());
+        node.setAttribute('data-ai-kind', 'sugg');
+      } else if (m.role === 'user') {
+        node.setAttribute('data-ai-kind', 'user');
+      } else if (idx === 0) {
+        node.setAttribute('data-ai-kind', 'greeting');
+      } else {
+        node.setAttribute('data-ai-kind', 'answer');
       }
       list.appendChild(node);
     });
     /* tombol handoff WhatsApp selalu tersedia setelah ada percakapan */
     if (A.hasUser) {
       var wa = el('div', 'ai-msg ai-msg-ai');
+      wa.setAttribute('data-ai-kind', 'handoff');
       var bub = el('div', 'ai-bubble ai-bubble-plain');
       bub.appendChild(waButton());
       wa.appendChild(bub);
@@ -4457,28 +4490,103 @@
     return out;
   }
 
+  function extractText(data) {
+    var c = data && data.candidates && data.candidates[0];
+    var parts = c && c.content && c.content.parts;
+    var txt = parts && parts.length ? parts[0].text : '';
+    /* <think> block (model 3.x) bisa muncul di awal — buang agar jawaban bersih */
+    txt = String(txt).replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    return txt;
+  }
+
   function callLLM() {
-    var key = getKey();
-    if (!key) return Promise.reject(new Error('no-key'));
     var body = {
       systemInstruction: { parts: [{ text: SYSTEM }] },
       contents: buildContents(),
       generationConfig: { temperature: 0.75, maxOutputTokens: 440, topP: 0.9 }
     };
-    return fetch(geminiUrl(), {
+    var payload = JSON.stringify(body);
+
+    /* ===== 1. PROXY (disarankan) =====
+       Serverless function /api/gemini menyimpan API key di server.
+       Dipakai otomatis bila tersedia; bila 404/405 (belum di-deploy)
+       atau network error, lanjut ke panggilan langsung. */
+    var proxy = proxyUrl();
+    var proxyAvailable = proxyEnabled();
+
+    /* ===== 2. LANGSUNG ke Google (fallback) ===== */
+    var lastStatus = 0;
+    function tryModel(idx) {
+      if (idx >= GEMINI_MODELS.length) {
+        var e = new Error('all-models-failed');
+        e.status = lastStatus;
+        return Promise.reject(e);
+      }
+      var model = GEMINI_MODELS[idx];
+      var key = getKey();
+      if (!key) return Promise.reject(new Error('no-key'));
+      return fetch(geminiUrl(model), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      }).then(function (r) {
+        if (!r.ok) {
+          return r.text().then(function (t) {
+            var err = new Error('HTTP ' + r.status + ' ' + t.slice(0, 180));
+            err.status = r.status;
+            err.model = model;
+            throw err;
+          });
+        }
+        return r.json();
+      }).then(function (data) {
+        var txt = extractText(data);
+        if (!txt) {
+          var e2 = new Error('empty-or-blocked');
+          e2.model = model;
+          throw e2;
+        }
+        return txt;
+      }).catch(function (err) {
+        /* 404 = model deprecated, 429 = kuota habis, 503 = sibuk → coba model berikutnya.
+           Catat status terakhir supaya pesan fallback menyebut penyebab sebenarnya. */
+        var s = err && err.status;
+        if (s) lastStatus = s;
+        if (s === 404 || s === 429 || s === 503 || /network|Failed to fetch/i.test(String(err && err.message))) {
+          return tryModel(idx + 1);
+        }
+        throw err;
+      });
+    }
+
+    if (!proxyAvailable) return tryModel(0);
+
+    return fetch(proxy, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: payload
     }).then(function (r) {
       if (!r.ok) {
-        return r.text().then(function (t) { throw new Error('HTTP ' + r.status + ' ' + t.slice(0, 180)); });
+        return r.text().then(function (t) {
+          var err = new Error('HTTP ' + r.status + ' ' + t.slice(0, 180));
+          err.status = r.status;
+          throw err;
+        });
       }
       return r.json();
     }).then(function (data) {
-      var c = data && data.candidates && data.candidates[0];
-      var txt = c && c.content && c.content.parts && c.content.parts[0] && c.content.parts[0].text;
-      if (!txt) throw new Error('empty-or-blocked');
-      return txt.trim();
+      /* proxy mengembalikan { reply, model } */
+      var txt = String((data && (data.reply || data.text)) || '').trim();
+      if (!txt) throw new Error('empty-proxy');
+      return txt;
+    }).catch(function (err) {
+      /* proxy belum ter-deploy / error → coba langsung ke Google */
+      var s = err && err.status;
+      if (s === 404 || s === 405 || s === 501 || /network|Failed to fetch/i.test(String(err && err.message))) {
+        return tryModel(0);
+      }
+      if (s) lastStatus = s;
+      throw err;
     });
   }
 
@@ -4508,9 +4616,17 @@
     }).catch(function (err) {
       typing.remove();
       var key = getKey();
-      var msg = key
-        ? 'Maaf, layanan AI sedang tidak dapat dihubungi. ' + (String(err.message || '').indexOf('429') >= 0 ? 'Kuota mungkin terbatas. ' : '') + 'Coba lagi nanti, atau langsung chat WhatsApp Daffa Maulana ya.'
-        : 'Fitur Konsultan AI perlu diaktifkan (API key Gemini belum diisi). Sementara itu, langsung chat WhatsApp Daffa Maulana saja ya.';
+      var em = String(err && err.message || '');
+      var msg;
+      if (!key && !proxyEnabled()) {
+        msg = 'Fitur Konsultan AI perlu diaktifkan (API key Gemini belum diisi). Sementara itu, langsung chat WhatsApp Daffa Maulana saja ya.';
+      } else if (/429/.test(em) || (err && err.status === 429)) {
+        msg = 'Kuota API AI sedang habis untuk saat ini. Coba lagi beberapa saat lagi, atau langsung chat WhatsApp Daffa Maulana ya.';
+      } else if (/all-models-failed/.test(em)) {
+        msg = 'Layanan AI sedang sibuk (semua model sedang penuh atau kuota habis). Coba lagi sebentar lagi, atau langsung chat WhatsApp Daffa Maulana ya.';
+      } else {
+        msg = 'Maaf, layanan AI sedang tidak dapat dihubungi. Coba lagi nanti, atau langsung chat WhatsApp Daffa Maulana ya.';
+      }
       push('ai', msg);
       DOM.send.disabled = false;
       DOM.input.focus();

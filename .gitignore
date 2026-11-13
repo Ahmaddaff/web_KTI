@@ -7,3 +7,38 @@ desktop.ini
 
 # Log
 *.log
+
+# Build helper scripts & test files (bahan baku, bukan bagian repo)
+capture-clips*.js
+capture-clip3.js
+encode-clips.js
+fix-clip1.js
+probe-interactions.js
+probe-kopi.js
+probe-ai.js
+probe-fab.js
+patch-showcase.js
+patch-v32.js
+patch-v33.js
+patch-v34.js
+ai-widget.js
+proxy-dev-server.js
+shot-ai-real*.js
+v32-test.js
+v33-test.js
+v34-test.js
+v35-test.js
+v38-test.js
+v39-test.js
+v34-navprobe.js
+v33-shots.js
+make-logo*.js
+fix-v39-test*.py
+upd-readme-v*.py
+fix-v38-test-proxy.py
+
+# Working assets (bahan baku, sudah disematkan di index.html sebagai data URI)
+mid-dev-logo*.webp
+pre-*.html
+portfolio-clips/
+pdf-read/
