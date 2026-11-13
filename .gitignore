@@ -21,6 +21,7 @@ patch-showcase.js
 patch-v32.js
 patch-v33.js
 patch-v34.js
+patch-v41.js
 ai-widget.js
 proxy-dev-server.js
 shot-ai-real*.js
@@ -30,11 +31,15 @@ v34-test.js
 v35-test.js
 v38-test.js
 v39-test.js
+v41-test.js
+v41-mock-test.js
+qa-v41-shots.js
 v34-navprobe.js
 v33-shots.js
 make-logo*.js
 fix-v39-test*.py
 upd-readme-v*.py
+upd-readme-v41.py
 fix-v38-test-proxy.py
 
 # Working assets (bahan baku, sudah disematkan di index.html sebagai data URI)

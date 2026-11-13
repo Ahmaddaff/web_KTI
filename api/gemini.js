@@ -37,7 +37,9 @@ export default async function handler(req, res) {
   const body = JSON.stringify({
     systemInstruction: systemInstruction || undefined,
     contents: contents || [],
-    generationConfig: generationConfig || { temperature: 0.75, maxOutputTokens: 440, topP: 0.9 }
+    /* maxOutputTokens besar: thinking block Gemini 3.x ikut memakai budget ini
+       (dengan 440, thinking menghabiskan ~420 sehingga jawaban terpotong). */
+    generationConfig: generationConfig || { temperature: 0.75, maxOutputTokens: 2000, topP: 0.9 }
   });
 
   let lastStatus = 0;

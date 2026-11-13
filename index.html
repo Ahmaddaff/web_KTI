@@ -2022,7 +2022,48 @@
       body .ai-fab, body .ai-panel, body .ai-chip, body .ai-send { transition:none !important; }
       body .ai-msg.is-typing .ai-bubble::after { animation:none; }
     }
-  </style>
+  
+    /* header: kelompok tombol kanan (hapus riwayat + tutup) */
+    body .ai-head-r { display:flex; align-items:center; gap:7px; flex:0 0 auto; }
+    body .ai-trash {
+      width:30px; height:30px; border-radius:9px; border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.08); color:#FFFFFF; display:flex; align-items:center; justify-content:center; cursor:pointer;
+      transition:background .18s ease, color .18s ease;
+    }
+    body .ai-trash:hover { background:rgba(255,255,255,.18); color:#FFD9CC; }
+
+    /* bar konfirmasi hapus riwayat */
+    body .ai-clearbar {
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:9px 12px; background:#FFF7ED; border-bottom:1px solid rgba(194,65,12,.18);
+      flex:0 0 auto; font-size:11px; color:#7C2D12;
+    }
+    body .ai-clearbar[hidden] { display:none; }
+    body .ai-clearbar-t { display:inline-flex; align-items:center; gap:6px; font-weight:700; line-height:1.35; }
+    body .ai-clearbar-t svg { flex:0 0 auto; }
+    body .ai-clearbar-b { display:inline-flex; gap:6px; flex:0 0 auto; }
+    body .ai-clearbar-no, body .ai-clearbar-yes {
+      padding:5px 10px; border-radius:9px; font-size:10.5px; font-weight:800; cursor:pointer; white-space:nowrap;
+      transition:background .18s ease, color .18s ease, transform .18s ease;
+    }
+    body .ai-clearbar-no { background:#FFFFFF; color:#7C2D12; border:1px solid rgba(194,65,12,.28); }
+    body .ai-clearbar-no:hover { background:#7C2D12; color:#FFFFFF; }
+    body .ai-clearbar-yes { background:#C2410C; color:#FFFFFF; border:1px solid #C2410C; }
+    body .ai-clearbar-yes:hover { transform:translateY(-1px); background:#9A3412; }
+
+    /* konfirmasi "sudah yakin?" */
+    body .ai-confirm { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+    body .ai-yes-btn, body .ai-no-btn {
+      display:inline-flex; align-items:center; gap:6px; padding:7px 11px; border-radius:10px;
+      font-size:11px; font-weight:800; cursor:pointer; white-space:nowrap;
+      transition:background .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+    body .ai-yes-btn { background:#043927; color:#FFFFFF; border:1px solid #043927; }
+    body .ai-yes-btn:hover { transform:translateY(-1px); box-shadow:0 8px 16px -8px rgba(4,57,39,.6); }
+    body .ai-no-btn { background:#FFFFFF; color:#043927; border:1px solid rgba(4,57,39,.24); }
+    body .ai-no-btn:hover { background:#043927; color:#FFFFFF; transform:translateY(-1px); }
+    body .ai-yes-btn svg, body .ai-no-btn svg { flex:0 0 auto; }
+</style>
 </head>
 <body class="bg-ink-950 text-slate-200 font-sans antialiased selection:bg-blue-500/30 selection:text-white overflow-x-hidden">
 
@@ -4350,7 +4391,7 @@
     '- WAJIB menjawab dalam Bahasa Indonesia, gunakan huruf Latin/ASCII. Jangan pernah menjawab dalam bahasa Inggris atau huruf Mandarin.',
     '- Sesuaikan rekomendasi paket & modul dengan kebutuhan yang diceritakan klien; jangan asumsikan.',
     '- Selalu sebutkan paket yang cocok beserta harganya (mis. Paket Business Rp 1.250.000) bila klien menanyakan sistem atau biaya.',
-    '- Bila klien sudah siap, arahkan ia menekan tombol "Kirim ringkasan ke WhatsApp Daffa Maulana" yang tersedia di panel ini.',
+    '- Bila klien sudah siap, arahkan ia menekan tombol konfirmasi "Ya, sudah yakin" yang muncul di panel chat ini. Tombol "Kirim ringkasan lengkap ke WhatsApp Daffa Maulana" HANYA muncul setelah klien menekan konfirmasi tersebut — jangan minta klien mengirim ringkasan secara manual.',
     '- Bila informasi kurang, ajukan pertanyaan balik yang relevan.',
     '- Tulis seperti obrolan chat manusia: sopan, ringkas, tidak kaku. Hindari format bernomor yang kaku kecuali benar-benar membantu.',
     '- Selalu membantu dan jujur; bila di luar ranah MID DEV, arahkan ke WhatsApp tim.'
@@ -4377,7 +4418,14 @@
   ];
 
   var DOM = null;
-  var A = { open: false, msgs: [], picks: [], asked: false, hasUser: false };
+  var A = {
+    open: false, msgs: [], picks: [], asked: false, hasUser: false,
+    confirmed: false,       /* klien sudah menyatakan "yakin" -> tombol WA muncul */
+    confirmShown: false,    /* prompt konfirmasi sudah pernah ditampilkan */
+    confirmDeclined: false, /* klien menjawab "belum, masih konsultasi" */
+    confirmAt: null,        /* { picks, user } saat prompt terakhir dibuat */
+    userCount: 0           /* jumlah pesan klien */
+  };
 
   /* ---------- DOM helpers ---------- */
   function el(tag, cls, html) {
@@ -4396,13 +4444,23 @@
 
   /* ---------- persistensi ---------- */
   function persist() {
-    try { localStorage.setItem('middev_ai_v1', JSON.stringify({ msgs: A.msgs, picks: A.picks, asked: A.asked, hasUser: A.hasUser })); } catch (e) {}
+    try {
+      localStorage.setItem('middev_ai_v1', JSON.stringify({
+        msgs: A.msgs, picks: A.picks, asked: A.asked, hasUser: A.hasUser,
+        confirmed: A.confirmed, confirmShown: A.confirmShown,
+        confirmDeclined: A.confirmDeclined, confirmAt: A.confirmAt,
+        userCount: A.userCount
+      }));
+    } catch (e) {}
   }
   function restore() {
     try {
       var s = JSON.parse(localStorage.getItem('middev_ai_v1') || 'null');
       if (s && Array.isArray(s.msgs)) {
         A.msgs = s.msgs; A.picks = s.picks || []; A.asked = !!s.asked; A.hasUser = !!s.hasUser;
+        A.confirmed = !!s.confirmed; A.confirmShown = !!s.confirmShown;
+        A.confirmDeclined = !!s.confirmDeclined; A.confirmAt = s.confirmAt || null;
+        A.userCount = typeof s.userCount === 'number' ? s.userCount : 0;
       }
     } catch (e) {}
   }
@@ -4428,6 +4486,22 @@
     return wrap;
   }
 
+  /* bubble konfirmasi "sudah yakin?" — hanya satu, digantikan saat dijawab */
+  function confirmPanel() {
+    var wrap = el('div', 'ai-confirm');
+    var yes = el('button', 'ai-yes-btn');
+    yes.type = 'button';
+    yes.setAttribute('data-ai-sure', 'yes');
+    yes.innerHTML = '<i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Ya, sudah yakin';
+    var no = el('button', 'ai-no-btn');
+    no.type = 'button';
+    no.setAttribute('data-ai-sure', 'no');
+    no.innerHTML = '<i data-lucide="message-circle-question" class="w-3.5 h-3.5"></i> Belum, masih konsultasi';
+    wrap.appendChild(yes);
+    wrap.appendChild(no);
+    return wrap;
+  }
+
   function render() {
     var list = DOM.list;
     list.innerHTML = '';
@@ -4435,9 +4509,14 @@
       var node = bubble(m.role, m.text, m.extra);
       if (m.kind === 'sugg') {
         var host = node.querySelector('.ai-bubble');
-        host.innerHTML = '<span class="ai-hint">Pilih salah satu agar saya bisa merekomendasikan modul & paket:</span>';
+        host.innerHTML = '<span class="ai-hint">Pilih salah satu agar saya bisa merekomendasikan modul &amp; paket:</span>';
         host.appendChild(stepPanel());
         node.setAttribute('data-ai-kind', 'sugg');
+      } else if (m.kind === 'confirm') {
+        var chost = node.querySelector('.ai-bubble');
+        chost.innerHTML = '<span class="ai-hint">Sudah yakin dengan pilihan di atas?</span>';
+        chost.appendChild(confirmPanel());
+        node.setAttribute('data-ai-kind', 'confirm');
       } else if (m.role === 'user') {
         node.setAttribute('data-ai-kind', 'user');
       } else if (idx === 0) {
@@ -4447,8 +4526,8 @@
       }
       list.appendChild(node);
     });
-    /* tombol handoff WhatsApp selalu tersedia setelah ada percakapan */
-    if (A.hasUser) {
+    /* tombol handoff WhatsApp HANYA muncul setelah klien menyatakan yakin */
+    if (A.hasUser && A.confirmed) {
       var wa = el('div', 'ai-msg ai-msg-ai');
       wa.setAttribute('data-ai-kind', 'handoff');
       var bub = el('div', 'ai-bubble ai-bubble-plain');
@@ -4503,7 +4582,11 @@
     var body = {
       systemInstruction: { parts: [{ text: SYSTEM }] },
       contents: buildContents(),
-      generationConfig: { temperature: 0.75, maxOutputTokens: 440, topP: 0.9 }
+      /* maxOutputTokens harus besar: model Gemini 3.x memakai thinking block
+         (thoughtsTokenCount) yang ikut memakan budget ini. Dengan 440 token,
+         thinking saja menghabiskan ~420 -> jawaban terpotong di tengah kalimat.
+         2000 memberi ruang untuk thinking + jawaban utuh. */
+      generationConfig: { temperature: 0.75, maxOutputTokens: 2000, topP: 0.9 }
     };
     var payload = JSON.stringify(body);
 
@@ -4598,11 +4681,78 @@
     return b;
   }
 
+  /* ---------- konfirmasi "sudah yakin" ---------- */
+  /* Deteksi kalimat yakin dari pesan klien (cadangan; jalur utama = tombol konfirmasi). */
+  var CERTAIN_RE = /sudah yakin|sudah mantap|sudah jelas|saya yakin|sudah siap|setuju|boleh kirim|boleh lanjut|siap kirim|gas kirim|oke kirim/i;
+  var NOT_YET_RE = /belum|gak\s+siap|nanti\s+dulu|later/i;
+
+  function isCertain(t) {
+    var s = String(t || '');
+    if (NOT_YET_RE.test(s)) return false;
+    return CERTAIN_RE.test(s);
+  }
+
+  /* ganti bubble konfirmasi yang masih menggantung dengan pesan biasa.
+     kind='sys' -> pesan internal UI, tidak ikut masuk rekap WhatsApp. */
+  function replaceConfirm(text) {
+    for (var i = A.msgs.length - 1; i >= 0; i--) {
+      if (A.msgs[i].kind === 'confirm') {
+        A.msgs[i] = { role: 'ai', text: text, kind: 'sys' };
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /* tampilkan prompt konfirmasi bila sudah cukup konteks */
+  function maybeOfferConfirm() {
+    if (A.confirmed) return;
+    var due = (A.picks.length > 0) || (A.userCount >= 2);
+    if (!due) return;
+    if (A.confirmShown) {
+      /* jangan spam — tawarkan lagi hanya bila ada perkembangan baru */
+      if (!A.confirmAt) return;
+      var progressed = (A.picks.length > A.confirmAt.picks) || (A.userCount >= A.confirmAt.user + 2);
+      if (!progressed) return;
+    }
+    A.confirmShown = true;
+    A.confirmDeclined = false;
+    A.confirmAt = { picks: A.picks.length, user: A.userCount };
+    A.msgs.push({ role: 'ai', text: '', extra: '', kind: 'confirm' });
+    persist();
+    render();
+  }
+
+  /* jawaban atas prompt konfirmasi */
+  function onSure(v) {
+    if (v === 'yes') {
+      A.confirmed = true;
+      A.confirmDeclined = false;
+      replaceConfirm('Siap, pilihan Anda sudah saya catat. Tekan tombol di bawah untuk mengirim <strong>ringkasan lengkap</strong> ke WhatsApp Daffa Maulana.');
+    } else {
+      A.confirmed = false;
+      A.confirmDeclined = true;
+      replaceConfirm('Baik, silakan tanya-tanya dulu saja. Saya bantu sampai Anda benar-benar yakin.');
+    }
+    A.confirmShown = true;
+    A.confirmAt = { picks: A.picks.length, user: A.userCount };
+    persist();
+    render();
+  }
+
   /* ---------- kirim pesan user ---------- */
   function send(text) {
     var t = (text || '').trim();
     if (!t) return;
     if (!A.hasUser) { A.hasUser = true; }
+    A.userCount++;
+    /* klien menulis "sudah yakin" dsb -> langsung anggap terkonfirmasi */
+    if (!A.confirmed && isCertain(t)) {
+      A.confirmed = true;
+      A.confirmShown = true;
+      A.confirmDeclined = false;
+      replaceConfirm('Baik, noted — saya anggap Anda sudah yakin. Tekan tombol di bawah untuk mengirim <strong>ringkasan lengkap</strong> ke WhatsApp Daffa Maulana.');
+    }
     push('user', esc(t));
     DOM.input.value = '';
     DOM.send.disabled = true;
@@ -4613,6 +4763,7 @@
       DOM.send.disabled = false;
       DOM.input.focus();
       maybeOfferModul();
+      maybeOfferConfirm();
     }).catch(function (err) {
       typing.remove();
       var key = getKey();
@@ -4655,31 +4806,105 @@
   }
 
   document.addEventListener('click', function (e) {
+    /* tombol hapus riwayat */
+    var clr = e.target.closest ? e.target.closest('[data-ai-clear]') : null;
+    if (clr) {
+      var cv = clr.getAttribute('data-ai-clear');
+      if (cv === 'ask') showClearBar();
+      else if (cv === 'yes') clearHistory();
+      else hideClearBar();
+      return;
+    }
+    /* tombol konfirmasi "sudah yakin" */
+    var sure = e.target.closest ? e.target.closest('[data-ai-sure]') : null;
+    if (sure) {
+      onSure(sure.getAttribute('data-ai-sure'));
+      return;
+    }
+    /* tombol pilih modul */
     var btn = e.target.closest ? e.target.closest('[data-ai-pick]') : null;
     if (!btn) return;
     onPick(btn.getAttribute('data-ai-pick'));
   });
 
   /* ---------- rekap & WhatsApp ---------- */
+  /* buang entity HTML + tag markup supaya rekap yang dikirim ke WhatsApp terbaca rapi */
+  function unesc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+      .replace(/&amp;/g, '&')
+      .replace(/<[^>]{0,120}>/g, '');
+  }
+
+  /* rekomendasi paket berdasarkan modul yang dipilih klien */
+  function recommendPackage() {
+    var p = A.picks.filter(function (x) { return x !== 'unsure'; });
+    if (!p.length) return 'Menyesuaikan kebutuhan (klien belum memilih modul)';
+    if (p.length >= 2) return 'Paket All-In-One Enterprise Rp 2.800.000 — sesuai untuk lebih dari satu modul / sistem custom';
+    if (p[0] === 'company') return 'Paket Starter CV & Web Profil Rp 450.000 — website company profile / portofolio';
+    if (p[0] === 'kasir' || p[0] === 'booking') return 'Paket UMKM & Booking System Rp 1.250.000 — sistem kasir, stok, dan booking';
+    if (p[0] === 'ecommerce' || p[0] === 'internal') return 'Paket All-In-One Enterprise Rp 2.800.000 — sistem custom / all-in-one';
+    return 'Menyesuaikan kebutuhan';
+  }
+
+  /* rekap LENGKAP — dikirim ke WhatsApp tim agar langsung bisa ditindaklanjuti */
   function recapText() {
     var L = [];
     L.push('*HASIL KONSULTASI AI — MID DEV*');
     L.push('Waktu: ' + now());
+    L.push('Status: Klien sudah *yakin* dan meminta proceeded');
     L.push('');
-    L.push('*Modul yang diminati*');
+
+    /* 1. kebutuhan utama */
+    L.push('*1. KEBUTUHAN UTAMA KLIEN*');
+    var q = A.msgs.filter(function (m) { return m.role === 'user'; })
+      .map(function (m) { return unesc(m.text); })
+      .filter(function (t) { return t && !/Saya tertarik dengan modul/.test(t); });
+    if (q.length) {
+      q.forEach(function (t) { L.push('• ' + t); });
+    } else {
+      L.push('• (klien belum menulis pertanyaan)');
+    }
+    L.push('');
+
+    /* 2. modul yang diminati */
+    L.push('*2. MODUL YANG DIMINATI*');
     if (A.picks.length) {
       A.picks.forEach(function (p) { L.push('• ' + (MODUL_LABEL[p] || p)); });
     } else {
       L.push('• (belum dipilih lewat panduan)');
     }
-    var q = A.msgs.filter(function (m) { return m.role === 'user'; })
-      .map(function (m) { return m.text; })
-      .filter(function (t) { return !/Saya tertarik dengan modul/.test(t); });
-    if (q.length) {
-      L.push('');
-      L.push('*Pertanyaan & kebutuhan klien*');
-      q.forEach(function (t) { L.push('• ' + t); });
+    L.push('');
+
+    /* 3. rekomendasi paket */
+    L.push('*3. REKOMENDASI PAKET*');
+    L.push('• ' + recommendPackage());
+    L.push('• Skema kontrak: BELI PUTUS (sekali bayar, source code & akun diserahkan, tanpa biaya bulanan)');
+    L.push('');
+
+    /* 4. ringkasan jawaban konsultan AI */
+    L.push('*4. RINGKASAN JAWABAN KONSULTAN AI*');
+    var ans = A.msgs.filter(function (m) { return m.role === 'ai' && !m.kind && m.text; })
+      .map(function (m) { return unesc(m.text); })
+      .filter(function (t) { return t && !/^Halo! Saya/.test(t); });
+    if (ans.length) {
+      var tail = ans.slice(-10);
+      tail.forEach(function (t, i) {
+        var s = t.replace(/\s+/g, ' ').trim();
+        if (s.length > 500) s = s.slice(0, 500) + '…';
+        L.push('• ' + (tail.length > 1 ? '[' + (i + 1) + '] ' : '') + s);
+      });
+    } else {
+      L.push('• (belum ada jawaban dari konsultan AI)');
     }
+    L.push('');
+
+    /* 5. kontak */
+    L.push('*5. KONTAK & PEMBAYARAN*');
+    L.push('• Account Manager: Daffa Maulana Akhmad M — WhatsApp +62 889-8363-6944');
+    L.push('• Email: info@middev.id');
+    L.push('• Pembayaran: QRIS (merchant PANDA COMPUTER, NMID ID1025404348167)');
     L.push('');
     L.push('Mohon dicek & ditindaklanjuti. Terima kasih.');
     return L.join('\n');
@@ -4693,15 +4918,38 @@
   function waButton() {
     var b = el('button', 'ai-wa-btn');
     b.type = 'button';
-    b.innerHTML = '<i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Kirim ringkasan ke WhatsApp Daffa Maulana';
+    b.innerHTML = '<i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Kirim ringkasan lengkap ke WhatsApp Daffa Maulana';
     b.addEventListener('click', function () {
       sendWA();
-      push('ai', 'Ringkasan sudah dikirim ke WhatsApp <strong>Daffa Maulana</strong> (Account Manager). Tim kami akan segera menghubungi Anda.');
+      push('ai', 'Ringkasan lengkap sudah dikirim ke WhatsApp <strong>Daffa Maulana</strong> (Account Manager). Tim kami akan segera menghubungi Anda.');
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         try { window.lucide.createIcons(); } catch (e) {}
       }
     });
     return b;
+  }
+
+  /* ---------- hapus riwayat ---------- */
+  function showClearBar() {
+    if (!DOM || !DOM.clearbar) return;
+    DOM.clearbar.hidden = false;
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      try { window.lucide.createIcons(); } catch (e) {}
+    }
+  }
+  function hideClearBar() {
+    if (!DOM || !DOM.clearbar) return;
+    DOM.clearbar.hidden = true;
+  }
+  function clearHistory() {
+    try { localStorage.removeItem('middev_ai_v1'); } catch (e) {}
+    A.msgs = []; A.picks = []; A.asked = false; A.hasUser = false;
+    A.confirmed = false; A.confirmShown = false; A.confirmDeclined = false;
+    A.confirmAt = null; A.userCount = 0;
+    persist();
+    hideClearBar();
+    render();
+    push('ai', 'Riwayat percakapan sudah dihapus. Sesi baru dimulai — silakan ceritakan kebutuhan website atau sistem bisnis Anda dari awal.');
   }
 
   /* ---------- bangun widget ---------- */
@@ -4721,7 +4969,17 @@
           '<span class="ai-avatar"><i data-lucide="bot" class="w-4 h-4"></i></span>' +
           '<div><strong>Konsultan AI MID DEV</strong><span class="ai-status"><span class="ai-dot"></span>Online · dikelola AI</span></div>' +
         '</div>' +
-        '<button type="button" class="ai-x" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button>' +
+        '<div class="ai-head-r">' +
+          '<button type="button" class="ai-trash" data-ai-clear="ask" aria-label="Hapus riwayat percakapan" title="Hapus riwayat"><i data-lucide="trash-2" class="w-4 h-4"></i></button>' +
+          '<button type="button" class="ai-x" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ai-clearbar" id="aiClearBar" hidden>' +
+        '<span class="ai-clearbar-t"><i data-lucide="triangle-alert" class="w-3.5 h-3.5"></i> Hapus semua riwayat percakapan?</span>' +
+        '<span class="ai-clearbar-b">' +
+          '<button type="button" class="ai-clearbar-no" data-ai-clear="no">Batal</button>' +
+          '<button type="button" class="ai-clearbar-yes" data-ai-clear="yes">Ya, hapus</button>' +
+        '</span>' +
       '</div>' +
       '<div class="ai-list" id="aiList"></div>' +
       '<div class="ai-quick" id="aiQuick">' +
@@ -4741,7 +4999,8 @@
     DOM = {
       wrap: wrap, fab: fab, panel: panel, list: panel.querySelector('#aiList'),
       input: panel.querySelector('#aiInput'), send: panel.querySelector('#aiSend'),
-      form: panel.querySelector('#aiForm'), quick: panel.querySelector('#aiQuick')
+      form: panel.querySelector('#aiForm'), quick: panel.querySelector('#aiQuick'),
+      clearbar: panel.querySelector('#aiClearBar')
     };
 
     panel.querySelector('.ai-x').addEventListener('click', function () { toggle(false); });
