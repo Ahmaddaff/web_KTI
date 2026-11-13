@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
+  <!-- REFRESH -> KEMBALI KE DASHBOARD
+       Browser secara bawaan memulihkan posisi scroll terakhir saat reload,
+       sehingga user "nyangkut" di section yang tadi dibaca. Scroll
+       restoration dimatikan di sini (paling awal, sebelum body di-render)
+       supaya posisi scroll selalu dikembalikan ke dashboard.
+       Logika reset lengkapnya ada di initPage() pada script utama. -->
+  <script>
+    if ('scrollRestoration' in history) {
+      try { history.scrollRestoration = 'manual'; } catch (e) {}
+    }
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MID DEV — Software & Web Agency</title>
@@ -3658,12 +3669,54 @@
     }, { passive: true });
     window.addEventListener('resize', updateBar, { passive: true });
 
+    /* ---------- RESET KE DASHBOARD SAAT REFRESH ----------
+       Tanpa ini, browser memulihkan posisi scroll terakhir sehingga
+       user "nyangkut" di section yang tadi dibaca (mis. Modul atau FAQ).
+       Saat RELOAD, halaman dipaksa kembali ke dashboard:
+         1. scroll ke atas (tampilan Beranda / hero),
+         2. panel mini-app dashboard di-reset ke "Overview Utama",
+         3. penanda nav aktif dibersihkan,
+         4. hash lama dibuang agar URL kembali bersih.
+
+       Deep-link dari luar (#view-faq) tetap dihormati, dan tombol Back
+       (bfcache) tidak terganggu — yang di-reset hanya RELOAD. */
+    function isReloadNav() {
+      try {
+        var e = performance.getEntriesByType('navigation')[0];
+        return !!(e && e.type === 'reload');
+      } catch (err) { return false; }
+    }
+
+    function resetToDashboard() {
+      try { history.scrollRestoration = 'manual'; } catch (e) {}
+      /* <html> memakai class scroll-smooth, jadi behavior harus 'instant'
+         agar posisi langsung terkunci di atas, bukan animasi halus. */
+      try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); }
+      catch (e) { window.scrollTo(0, 0); }
+      if (typeof dashSwitch === 'function') dashSwitch('overview');
+      if (typeof setActiveNav === 'function') setActiveNav('home');
+      if (typeof updateBar === 'function') updateBar();
+      /* buang hash lama supaya URL bersih dan tidak memaksa deep-link lagi */
+      try {
+        if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      } catch (e) {}
+    }
+
     // init: deep-link (#view-...) + first paint
     (function initPage() {
       initReveal();
       updateBar();
       const h = (location.hash || '').replace('#', '');
-      if (h && h !== 'home' && document.getElementById('view-' + h)) {
+      if (isReloadNav()) {
+        /* REFRESH -> selalu kembali ke dashboard */
+        resetToDashboard();
+        /* beberapa browser memulihkan scroll setelah script selesai; kunci
+           lagi posisi atas begitu semua resource selesai dimuat */
+        window.addEventListener('load', function () {
+          try { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, 0); }
+          if (typeof updateBar === 'function') updateBar();
+        });
+      } else if (h && h !== 'home' && document.getElementById('view-' + h)) {
         setTimeout(() => navigate(h), 150);
       } else {
         setTimeout(animateCounters, 450);

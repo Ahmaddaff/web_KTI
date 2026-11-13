@@ -33,7 +33,17 @@ v38-test.js
 v39-test.js
 v41-test.js
 v41-mock-test.js
+v42-proxy-test.js
+v42-client-test.js
+v43-refresh-test.js
 qa-v41-shots.js
+qa-v43-shots.js
+probe-refresh.js
+probe-tokens*.js
+probe-thinking.js
+probe-live-*.js
+probe-unesc.js
+wait-quota.js
 v34-navprobe.js
 v33-shots.js
 make-logo*.js
