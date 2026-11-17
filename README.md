@@ -2,7 +2,7 @@
 
 Landing page satu halaman untuk **MID DEV**, agency jasa pembuatan website & software dengan model kontrak **beli putus** (sekali bayar, tanpa biaya bulanan wajib).
 
-Halaman ini adalah satu file HTML mandiri — tanpa build step, tanpa dependency yang perlu di-install, dan **tanpa file aset terpisah**: logo (WebP), 4 cuplikan video portofolio interaktif 14 detik (WebM + poster WebP), **5 potret tim dari PDF**, dan **kartu QRIS pembayaran** disematkan sebagai data URI di dalam `index.html`.
+Halaman ini adalah satu file HTML mandiri — tanpa build step, tanpa dependency yang perlu di-install, dan **tanpa file aset terpisah**: logo (WebP), 4 cuplikan video portofolio interaktif 14 detik (WebM + poster WebP), **foto bareng tim inti dengan background transparan**, dan **kartu QRIS pembayaran** disematkan sebagai data URI di dalam `index.html`.
 
 ## Menjalankan secara lokal
 
@@ -26,7 +26,7 @@ Lalu buka <http://127.0.0.1:8000/index.html>. Server ini menyajikan file statis 
 
 | Bagian | Keterangan |
 | --- | --- |
-| Hero | Judul utama (satu tanda `&`), animasi cahaya ala Raycast, **Tim Inti MID DEV (5 anggota dengan foto asli dari PDF)**, **Tujuan Kami** (misi + 3 pilar + 4 statistik + CTA), strip keunggulan, dan mockup dashboard interaktif |
+| Hero | Judul utama (satu tanda `&`), animasi cahaya ala Raycast, **Tim Inti MID DEV (satu foto bareng 5 anggota, background dihapus + label nama/peran)**, **Tujuan Kami** (misi + 3 pilar + 4 statistik + CTA), strip keunggulan, dan mockup dashboard interaktif |
 | Modul Sistem | Daftar modul + **reel 2x2 berisi 4 cuplikan video interaktif 14 detik yang melayang tanpa panel**; tab **Booking** jadi default karena demo kasir sudah dihapus |
 | Cara Kerja Kontrak | 4 langkah alur kerja, dari kesepakatan awal sampai website online |
 | **Pendaftaran Proyek** | **Alur 5 langkah**: pilih paket -> data pemesan -> kebutuhan/modul -> ringkasan -> **pembayaran QRIS** + **Konfirmasi Pembayaran** (`Belum Dibayarkan` / `Sudah Dibayarkan`) -> rekap otomatis ke WhatsApp. Menggantikan section Biaya lama |
@@ -36,6 +36,13 @@ Lalu buka <http://127.0.0.1:8000/index.html>. Server ini menyajikan file statis 
 
 ## Detail teknis
 
+- **Foto tim bareng tanpa latar (v45)** — 5 kartu potret individu di `#mdTeam` diganti **satu foto bersama seluruh tim** (spoken photo asli, bukan ilustrasi) dengan background studio dihapus.
+  - Sumber: `Untitled design (8).png` (clipboard, 1920x1357). Latar studio dipotong pakai `rembg` + `u2net_human_seg`, lalu label/garis penunjuk bawaan dibersihkan dengan `OpenCV inpaint` supaya tidak ada teks atau garis putih yang menempel di kemeja.
+  - Foto dipangkas ke framing dada-ke-atas (y < 952 px) agar label bawaan yang menimpa kemeja tidak ikut terpotong; hasilnya WebP RGBA 1578x816 (~104 KB) disematkan sebagai `data:image/webp;base64,...`.
+  - Kelima nama + peran digambar ulang sebagai **label HTML** (pill gelap transparan, nama putih, peran hijau) yang diposisikan di dekat masing-masing orang — teks tetap tajam di semua resolusi, berbeda dengan teks yang di-bake ke gambar.
+  - Di bawah foto tetap ada strip 5 peran + deskripsi singkat (tanpa foto individu) dan catatan penutup tim. Mobile: label otomatis turun jadi chip di bawah foto, tidak menimpa wajah.
+  - `<style id="mdTeamGroupCss">` memakai `!important` karena Tailwind Play CDN menyuntik stylesheet saat runtime. CSS lama `.md-member` / `.md-photo` dibiarkan tidak terpakai (tidak dihapus) supaya tidak mengganggu bagian lain.
+  - QA: `v45-qa.js` di desktop 1440x900 dan mobile 390x844 — gambar ter-decode (1578x816), 5 label tampil, 0 kartu foto individu, 0 error konsol, tanpa overflow.
 - **Branding MID DEV** (`<style id="mdBrand">`): seluruh identitas lama "Juraganweb" diganti — `<title>`, wordmark navbar & footer (`MID DEV` + subjudul `SOFTWARE & WEB AGENCY`), footer command palette (`MID DEV . QUICK NAV`), email `info@juraganweb.com` -> `info@middev.id`, sapaan pesan estimator, dan 4 deep-link WhatsApp (`Halo%20Juraganweb,` -> `Halo%20MID%20DEV,`). Tersisa **0** kemunculan nama lama.
   - **Logo 3D "MD" (transparan)**: logo MID DEV versi baru — monogram "MD" 3D arsir charcoal (#3B3F43->#9EA4A6) + panah/parallelogram hijau limau (#9EF51A/#A4F51C). Sumber `Untitled design (4).png` diproses `make-logo2.js` — di-key-out background putihnya (sampling pojok + ambang kroma, downsample 768->256) -> WebP transparan ber-alpha (~59% area transparan, sudut alpha 0). Disematkan 2x sebagai `data:image/webp;base64,...` — CSS `--md-logo` + `<link rel="icon">`. `.md-logo` `object-fit: contain` tanpa `border-radius`/`box-shadow` (navbar 44x44, footer 32x32).
 - **Garis cahaya hijau yang benar-benar terlihat**: beam lama memakai alpha `.17` sehingga di atas kanvas putih terbaca sebagai ruang kosong. Sekarang ada 4 `.hb-line` diagonal (`.05 -> .46 -> .13`, `blur(7px)`, animasi `mdStreak` 10s dengan delay berbeda — peak opacity keyframe diturunkan ke `.46->.82`) + wash kedua `.hb-wash-2`, dan 7 beam utama dinaikkan ke `.10/.28/.08` dengan `blur(20px)`. Semua cahaya memakai hijau semeton `#14A473` / `rgba(20,164,115,...)`; aksen solid tetap `#043927`. Opacity garis sengaja diturunkan sedikit (peak `.55->.46`, beam `.34->.28`) agar tidak terlalu kontras. Keempat lapisan baru ikut dimatikan oleh `prefers-reduced-motion`.
@@ -121,7 +128,7 @@ Lalu buka <http://127.0.0.1:8000/index.html>. Server ini menyajikan file statis 
 
 ```
 .
-+-- index.html         # seluruh halaman: markup, CSS, JS, logo + 4 video/poster 14 detik + 5 potret tim + QRIS (data URI)
++-- index.html         # seluruh halaman: markup, CSS, JS, logo + 4 video/poster 14 detik + foto tim grup transparan + QRIS (data URI)
 +-- api/
 |   +-- gemini.js      # Vercel serverless function: proxy Gemini (API key di env var, bukan di client) + retry anti-pemotongan
 +-- README.md
