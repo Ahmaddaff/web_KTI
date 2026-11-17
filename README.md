@@ -36,13 +36,14 @@ Lalu buka <http://127.0.0.1:8000/index.html>. Server ini menyajikan file statis 
 
 ## Detail teknis
 
-- **Foto tim bareng tanpa latar (v45)** — 5 kartu potret individu di `#mdTeam` diganti **satu foto bersama seluruh tim** (spoken photo asli, bukan ilustrasi) dengan background studio dihapus.
-  - Sumber: `Untitled design (8).png` (clipboard, 1920x1357). Latar studio dipotong pakai `rembg` + `u2net_human_seg`, lalu label/garis penunjuk bawaan dibersihkan dengan `OpenCV inpaint` supaya tidak ada teks atau garis putih yang menempel di kemeja.
-  - Foto dipangkas ke framing dada-ke-atas (y < 952 px) agar label bawaan yang menimpa kemeja tidak ikut terpotong; hasilnya WebP RGBA 1578x816 (~104 KB) disematkan sebagai `data:image/webp;base64,...`.
-  - Kelima nama + peran digambar ulang sebagai **label HTML** (pill gelap transparan, nama putih, peran hijau) yang diposisikan di dekat masing-masing orang — teks tetap tajam di semua resolusi, berbeda dengan teks yang di-bake ke gambar.
-  - Di bawah foto tetap ada strip 5 peran + deskripsi singkat (tanpa foto individu) dan catatan penutup tim. Mobile: label otomatis turun jadi chip di bawah foto, tidak menimpa wajah.
-  - `<style id="mdTeamGroupCss">` memakai `!important` karena Tailwind Play CDN menyuntik stylesheet saat runtime. CSS lama `.md-member` / `.md-photo` dibiarkan tidak terpakai (tidak dihapus) supaya tidak mengganggu bagian lain.
-  - QA: `v45-qa.js` di desktop 1440x900 dan mobile 390x844 — gambar ter-decode (1578x816), 5 label tampil, 0 kartu foto individu, 0 error konsol, tanpa overflow.
+- **Foto tim bareng tanpa latar, versi HD (v45 → v46)** — 5 kartu potret individu di `#mdTeam` diganti **satu foto bersama seluruh tim** (foto asli, bukan ilustrasi) dengan latar transparan.
+  - Sumber final: file asli `C:/Users/Thinkpad X13/Downloads/Untitled design (10).png` — **2774x1984 RGBA**, sudah transparan dan sudah memuat 5 label + garis penunjuk yang rapi. Versi clipboard/JPEG 1920x1373 hanya dipakai untuk inspeksi.
+  - Tidak ada inpaint / generative retouch: kelima wajah dan struktur tubuh **tidak diubah**. Cukup auto-crop 1,2% + **upscale 1.2x Lanczos** + unsharp mask ringan (radius 1.0, 100%, threshold 3) → **3193x2324** WebP RGBA q92 (~513 KB), disematkan sebagai `data:image/webp;base64,...`.
+  - Percobaan menghapus label bawaan lewat `rembg` + `OpenCV inpaint` meninggalkan garis/batas biru di kemeja, jadi dibatalkan — label asli dari desain dipertahankan dan label HTML duplikat dihapus.
+  - Foto **tidak dipotong**: seluruh badan sampai tangan/tumpuan kaki terlihat. Panel `.mdtg-stage` kini benar-benar transparan (`background:transparent`, `border:0`, `overflow:visible`, padding 0) sehingga **grid hijau dan beam cahaya halaman tampak menyambung langsung di belakang orang** — tidak ada kartu putih/abu-abu yang memisahkan.
+  - Di bawah foto tetap ada strip 5 peran + deskripsi singkat (tanpa foto individu) dan catatan penutup tim.
+  - `<style id="mdTeamGroupCss">` memakai `!important` karena Tailwind Play CDN menyuntik stylesheet saat runtime. CSS lama `.md-member` / `.md-photo` / `.mdtg-tag` dibiarkan tidak terpakai supaya tidak mengganggu bagian lain.
+  - QA: `v45-qa.js` di desktop 1440x900 dan mobile 390x844 — gambar ter-decode (3193x2324), 0 label HTML duplikat, 0 kartu foto individu, 0 error konsol, tanpa overflow.
 - **Branding MID DEV** (`<style id="mdBrand">`): seluruh identitas lama "Juraganweb" diganti — `<title>`, wordmark navbar & footer (`MID DEV` + subjudul `SOFTWARE & WEB AGENCY`), footer command palette (`MID DEV . QUICK NAV`), email `info@juraganweb.com` -> `info@middev.id`, sapaan pesan estimator, dan 4 deep-link WhatsApp (`Halo%20Juraganweb,` -> `Halo%20MID%20DEV,`). Tersisa **0** kemunculan nama lama.
   - **Logo 3D "MD" (transparan)**: logo MID DEV versi baru — monogram "MD" 3D arsir charcoal (#3B3F43->#9EA4A6) + panah/parallelogram hijau limau (#9EF51A/#A4F51C). Sumber `Untitled design (4).png` diproses `make-logo2.js` — di-key-out background putihnya (sampling pojok + ambang kroma, downsample 768->256) -> WebP transparan ber-alpha (~59% area transparan, sudut alpha 0). Disematkan 2x sebagai `data:image/webp;base64,...` — CSS `--md-logo` + `<link rel="icon">`. `.md-logo` `object-fit: contain` tanpa `border-radius`/`box-shadow` (navbar 44x44, footer 32x32).
 - **Garis cahaya hijau yang benar-benar terlihat**: beam lama memakai alpha `.17` sehingga di atas kanvas putih terbaca sebagai ruang kosong. Sekarang ada 4 `.hb-line` diagonal (`.05 -> .46 -> .13`, `blur(7px)`, animasi `mdStreak` 10s dengan delay berbeda — peak opacity keyframe diturunkan ke `.46->.82`) + wash kedua `.hb-wash-2`, dan 7 beam utama dinaikkan ke `.10/.28/.08` dengan `blur(20px)`. Semua cahaya memakai hijau semeton `#14A473` / `rgba(20,164,115,...)`; aksen solid tetap `#043927`. Opacity garis sengaja diturunkan sedikit (peak `.55->.46`, beam `.34->.28`) agar tidak terlalu kontras. Keempat lapisan baru ikut dimatikan oleh `prefers-reduced-motion`.
@@ -128,7 +129,7 @@ Lalu buka <http://127.0.0.1:8000/index.html>. Server ini menyajikan file statis 
 
 ```
 .
-+-- index.html         # seluruh halaman: markup, CSS, JS, logo + 4 video/poster 14 detik + foto tim grup transparan + QRIS (data URI)
++-- index.html         # seluruh halaman: markup, CSS, JS, logo + 4 video/poster 14 detik + foto tim grup HD transparan + QRIS (data URI)
 +-- api/
 |   +-- gemini.js      # Vercel serverless function: proxy Gemini (API key di env var, bukan di client) + retry anti-pemotongan
 +-- README.md
